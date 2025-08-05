@@ -113,6 +113,11 @@ Examples:
     dashboard_parser.add_argument('--port', type=int, default=5000, help='Port to bind to')
     dashboard_parser.add_argument('--debug', action='store_true', help='Enable debug mode')
 
+    # Intensity analysis command
+    intensity_parser = subparsers.add_parser('intensity', help='Analyze resource intensity patterns')
+    intensity_parser.add_argument('--duration', type=int, default=30, help='Analysis duration in minutes')
+    intensity_parser.add_argument('--demo', action='store_true', help='Run intensity engine demo')
+
     # Global options
     parser.add_argument('--verbose', '-v', action='store_true', help='Enable verbose logging')
     parser.add_argument('--debug', action='store_true', help='Enable debug mode')
@@ -154,6 +159,8 @@ Examples:
         run_monitor(args, config)
     elif args.command == 'dashboard':
         run_dashboard(args, config)
+    elif args.command == 'intensity':
+        run_intensity_analysis(args, config)
     else:
         parser.print_help()
 
@@ -367,6 +374,62 @@ def run_dashboard(args, config):
         print("💡 Install Flask and Flask-SocketIO: pip install flask flask-socketio")
     except Exception as e:
         print(f"❌ Dashboard error: {e}")
+
+
+def run_intensity_analysis(args, config):
+    """Run intensity pattern analysis."""
+    try:
+        from src.core.investigator import URCSInvestigator
+        from src.utils.intensity_engine import demo_intensity_engine
+        
+        if args.demo:
+            print("🚀 Running Intensity Engine Demo...")
+            print("💡 This demonstrates legitimate resource management patterns")
+            demo_intensity_engine()
+        else:
+            print(f"🔍 Analyzing intensity patterns for {args.duration} minutes...")
+            
+            investigator = URCSInvestigator(config)
+            results = investigator.analyze_intensity_patterns(duration_minutes=args.duration)
+            
+            if "error" in results:
+                print(f"❌ Intensity analysis failed: {results['error']}")
+                return
+            
+            print("✅ Intensity analysis completed!")
+            print(f"📊 Current intensity: {results['current_intensity']}%")
+            print(f"📋 Current reason: {results['current_reason']}")
+            
+            # Show statistics
+            stats = results.get('statistics', {})
+            if stats:
+                print(f"\n📈 Statistics:")
+                print(f"   Average intensity: {stats.get('average_intensity', 0):.1f}%")
+                print(f"   Max intensity: {stats.get('max_intensity', 0)}%")
+                print(f"   Min intensity: {stats.get('min_intensity', 0)}%")
+                print(f"   Total decisions: {stats.get('total_decisions', 0)}")
+            
+            # Show suspicious patterns
+            suspicious = results.get('suspicious_patterns', [])
+            if suspicious:
+                print(f"\n⚠️ Suspicious patterns detected:")
+                for pattern in suspicious:
+                    print(f"   - {pattern['type']}: {pattern['description']} (Severity: {pattern['severity']})")
+            else:
+                print(f"\n✅ No suspicious patterns detected")
+            
+            # Show recommendations
+            recommendations = results.get('recommendations', [])
+            if recommendations:
+                print(f"\n💡 Recommendations:")
+                for rec in recommendations:
+                    print(f"   - {rec}")
+            
+    except ImportError as e:
+        print(f"❌ Failed to import intensity engine: {e}")
+        print("💡 Install required dependencies: pip install psutil wmi py-cpuinfo")
+    except Exception as e:
+        print(f"❌ Intensity analysis error: {e}")
 
 
 if __name__ == "__main__":

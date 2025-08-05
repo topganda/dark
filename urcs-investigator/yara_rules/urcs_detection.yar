@@ -186,7 +186,7 @@ rule urcs_evasion {
     strings:
         // Task Manager detection and CPU throttling
         $taskmgr = "taskmgr.exe" nocase
-        $process_list = "EnumProcesses" nocase
+
         $watchdog_thread = "watchdog thread" nocase
         $cpu_throttle = "CPU throttle" nocase
         
@@ -314,7 +314,7 @@ rule urcs_fake_installer {
         
         // Installation simulation
         $install = "install" nocase
-        $setup = "setup" nocase
+
         $chrome_install = "chrome install" nocase
     
     condition:

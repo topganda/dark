@@ -20,6 +20,7 @@ from ..forensics.registry_analyzer import RegistryAnalyzer
 from ..forensics.process_analyzer import ProcessAnalyzer
 from ..reporting.report_generator import ReportGenerator
 from ..utils.ioc_extractor import IOCExtractor
+from ..utils.intensity_engine import IntensityEngine
 
 
 class URCSInvestigator:
@@ -45,6 +46,9 @@ class URCSInvestigator:
         # Initialize reporting modules
         self.report_generator = ReportGenerator(config)
         self.ioc_extractor = IOCExtractor(config)
+        
+        # Initialize intensity engine for resource management analysis
+        self.intensity_engine = IntensityEngine(poll_seconds=5)
         
         # Investigation state
         self.investigation_id = None
@@ -298,6 +302,60 @@ class URCSInvestigator:
             output_dir,
             format
         )
+    
+    def analyze_intensity_patterns(self, duration_minutes: int = 30) -> Dict[str, Any]:
+        """
+        Analyze resource intensity patterns to detect suspicious behavior.
+        
+        Args:
+            duration_minutes: Duration to analyze in minutes
+            
+        Returns:
+            Dictionary containing intensity analysis results
+        """
+        self.logger.info(f"Analyzing intensity patterns for {duration_minutes} minutes")
+        
+        try:
+            # Start intensity monitoring if not already running
+            if not self.intensity_engine.running:
+                self.intensity_engine.start_monitoring()
+                time.sleep(10)  # Collect some initial data
+            
+            # Get intensity statistics
+            stats = self.intensity_engine.get_intensity_stats(duration_minutes)
+            
+            # Get intensity history
+            history = self.intensity_engine.get_intensity_history(duration_minutes)
+            
+            # Detect suspicious patterns
+            suspicious_patterns = self.intensity_engine.detect_suspicious_patterns()
+            
+            # Get current intensity
+            current_intensity = self.intensity_engine.get_current_intensity()
+            
+            # Analyze patterns
+            analysis_results = {
+                "analysis_type": "intensity_patterns",
+                "duration_minutes": duration_minutes,
+                "timestamp": datetime.now().isoformat(),
+                "current_intensity": current_intensity.intensity_percent if current_intensity else 0,
+                "current_reason": current_intensity.reason if current_intensity else "Unknown",
+                "statistics": stats,
+                "suspicious_patterns": suspicious_patterns,
+                "pattern_analysis": self._analyze_intensity_patterns(history),
+                "recommendations": self._generate_intensity_recommendations(stats, suspicious_patterns)
+            }
+            
+            self.logger.info(f"Intensity analysis completed: {len(suspicious_patterns)} suspicious patterns found")
+            return analysis_results
+            
+        except Exception as e:
+            self.logger.error(f"Intensity analysis failed: {e}")
+            return {
+                "analysis_type": "intensity_patterns",
+                "error": str(e),
+                "timestamp": datetime.now().isoformat()
+            }
     
     # Behavior-specific detection methods
     
@@ -930,7 +988,7 @@ rule urcs_combined_detection {
         
         // Self-copy indicators
         $color_dir = "\\System32\\spool\\drivers\\color\\" nocase
-        $random_exe = /[a-z]{8}\.exe/ nocase
+        $random_exe = /[a-z]{8}\\.exe/ nocase
         
         // Registry persistence indicators
         $ctfmon = "ctfmon" nocase
@@ -1082,3 +1140,115 @@ rule urcs_combined_detection {
         except Exception as e:
             self.logger.error(f"Zeek availability check failed: {e}")
             return False
+    
+    def _analyze_intensity_patterns(self, history: List) -> Dict[str, Any]:
+        """Analyze intensity patterns for behavioral insights."""
+        if not history:
+            return {}
+        
+        intensities = [d.intensity_percent for d in history]
+        reasons = [d.reason for d in history]
+        
+        # Analyze pattern characteristics
+        pattern_analysis = {
+            "total_decisions": len(history),
+            "average_intensity": sum(intensities) / len(intensities),
+            "intensity_variance": self._calculate_variance(intensities),
+            "most_common_reason": max(set(reasons), key=reasons.count),
+            "reason_distribution": self._count_reasons(reasons),
+            "intensity_distribution": self._categorize_intensities(intensities),
+            "pattern_consistency": self._assess_pattern_consistency(history)
+        }
+        
+        return pattern_analysis
+    
+    def _calculate_variance(self, values: List[float]) -> float:
+        """Calculate variance of a list of values."""
+        if len(values) < 2:
+            return 0.0
+        mean = sum(values) / len(values)
+        return sum((x - mean) ** 2 for x in values) / len(values)
+    
+    def _count_reasons(self, reasons: List[str]) -> Dict[str, int]:
+        """Count occurrences of each reason."""
+        from collections import Counter
+        return dict(Counter(reasons))
+    
+    def _categorize_intensities(self, intensities: List[int]) -> Dict[str, int]:
+        """Categorize intensities into ranges."""
+        categories = {
+            "low (0-25%)": 0,
+            "medium (26-50%)": 0,
+            "high (51-75%)": 0,
+            "very_high (76-100%)": 0
+        }
+        
+        for intensity in intensities:
+            if intensity <= 25:
+                categories["low (0-25%)"] += 1
+            elif intensity <= 50:
+                categories["medium (26-50%)"] += 1
+            elif intensity <= 75:
+                categories["high (51-75%)"] += 1
+            else:
+                categories["very_high (76-100%)"] += 1
+        
+        return categories
+    
+    def _assess_pattern_consistency(self, history: List) -> Dict[str, Any]:
+        """Assess the consistency of intensity patterns."""
+        if len(history) < 2:
+            return {"consistency_score": 0.0, "pattern_type": "insufficient_data"}
+        
+        # Calculate consistency based on intensity changes
+        changes = []
+        for i in range(1, len(history)):
+            change = abs(history[i].intensity_percent - history[i-1].intensity_percent)
+            changes.append(change)
+        
+        avg_change = sum(changes) / len(changes)
+        consistency_score = max(0, 100 - avg_change)  # Higher score = more consistent
+        
+        # Determine pattern type
+        if consistency_score > 80:
+            pattern_type = "very_consistent"
+        elif consistency_score > 60:
+            pattern_type = "moderately_consistent"
+        elif consistency_score > 40:
+            pattern_type = "variable"
+        else:
+            pattern_type = "highly_variable"
+        
+        return {
+            "consistency_score": consistency_score,
+            "pattern_type": pattern_type,
+            "average_change": avg_change,
+            "max_change": max(changes) if changes else 0
+        }
+    
+    def _generate_intensity_recommendations(self, stats: Dict[str, Any], suspicious_patterns: List) -> List[str]:
+        """Generate recommendations based on intensity analysis."""
+        recommendations = []
+        
+        # Check for high average intensity
+        avg_intensity = stats.get("average_intensity", 0)
+        if avg_intensity > 70:
+            recommendations.append("High average intensity detected - consider investigating for unauthorized resource usage")
+        
+        # Check for suspicious patterns
+        if suspicious_patterns:
+            recommendations.append(f"Found {len(suspicious_patterns)} suspicious patterns - recommend detailed investigation")
+        
+        # Check for rapid changes
+        if stats.get("total_decisions", 0) > 50:
+            recommendations.append("High decision frequency detected - may indicate aggressive resource management")
+        
+        # Check for ignored system state
+        for pattern in suspicious_patterns:
+            if pattern["type"] == "ignored_system_state":
+                recommendations.append("System state being ignored - potential unauthorized activity")
+        
+        if not recommendations:
+            recommendations.append("No immediate concerns detected - continue monitoring")
+        
+        return recommendations
