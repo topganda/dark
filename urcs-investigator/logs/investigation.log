@@ -88,3 +88,7 @@
 2025-08-05 18:29:52,176 - src.analysis.network_analyzer - ERROR - Current connection analysis failed: [Errno 2] No such file or directory: 'netstat'
 2025-08-05 18:29:52,176 - src.analysis.network_analyzer - ERROR - Current connection analysis failed: [Errno 2] No such file or directory: 'netstat'
 2025-08-05 18:29:55,355 - src.utils.validator - WARNING - No explicit investigation authorization found
+2025-08-05 19:00:48,288 - src.utils.validator - WARNING - No explicit investigation authorization found
+2025-08-05 19:00:53,942 - src.utils.validator - WARNING - No explicit investigation authorization found
+2025-08-05 19:00:57,262 - src.utils.validator - WARNING - No explicit investigation authorization found
+2025-08-05 19:01:00,480 - src.utils.validator - WARNING - No explicit investigation authorization found

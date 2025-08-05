@@ -1,0 +1,373 @@
+{
+  "timestamp": "2025-08-05T19:00:35.899124",
+  "purpose": "Educational report on cryptojacking threats and defensive measures",
+  "disclaimer": "FOR EDUCATIONAL PURPOSES ONLY - NO ACTUAL ATTACKS OCCUR",
+  "threats": {
+    "browser_mining": {
+      "threat_name": "Browser-Based Cryptojacking",
+      "description": "Malicious JavaScript code that uses visitors' CPU power to mine cryptocurrencies without their knowledge.",
+      "attack_vectors": [
+        "Compromised websites",
+        "Malicious advertisements",
+        "Infected browser extensions",
+        "Phishing websites"
+      ],
+      "indicators": [
+        "High CPU usage in browser processes",
+        "Suspicious JavaScript execution",
+        "Connections to mining pools",
+        "Browser performance degradation"
+      ],
+      "impact": "Reduced system performance, increased electricity costs, potential data theft",
+      "detection_methods": [
+        "Browser developer tools monitoring",
+        "Network traffic analysis",
+        "CPU usage monitoring",
+        "JavaScript execution analysis"
+      ],
+      "mitigation_strategies": [
+        "Use ad blockers and script blockers",
+        "Keep browsers and extensions updated",
+        "Monitor browser performance",
+        "Use security extensions"
+      ],
+      "educational_examples": [
+        "Coinhive JavaScript miner",
+        "CryptoLoot mining script",
+        "Browser extension miners",
+        "WebAssembly-based miners"
+      ]
+    },
+    "malware_mining": {
+      "threat_name": "Malware-Based Cryptojacking",
+      "description": "Malicious software that installs mining programs on infected systems without user consent.",
+      "attack_vectors": [
+        "Phishing emails with malicious attachments",
+        "Compromised software downloads",
+        "Exploited vulnerabilities",
+        "Social engineering attacks"
+      ],
+      "indicators": [
+        "Unexpected high CPU usage",
+        "Unknown processes in task manager",
+        "Suspicious network connections",
+        "Modified system files"
+      ],
+      "impact": "System performance degradation, increased electricity costs, potential data theft, hardware damage",
+      "detection_methods": [
+        "Process monitoring",
+        "Network traffic analysis",
+        "File system monitoring",
+        "Registry monitoring"
+      ],
+      "mitigation_strategies": [
+        "Keep systems and software updated",
+        "Use antivirus and antimalware software",
+        "Implement application whitelisting",
+        "Monitor system performance"
+      ],
+      "educational_examples": [
+        "XMRig malware variants",
+        "T-Rex miner malware",
+        "TeamRedMiner infections",
+        "Custom mining malware"
+      ]
+    },
+    "container_mining": {
+      "threat_name": "Container-Based Cryptojacking",
+      "description": "Malicious containers that run mining operations in containerized environments.",
+      "attack_vectors": [
+        "Compromised container images",
+        "Exploited container vulnerabilities",
+        "Misconfigured container security",
+        "Supply chain attacks"
+      ],
+      "indicators": [
+        "High CPU usage in containers",
+        "Suspicious container processes",
+        "Mining-related network traffic",
+        "Resource exhaustion"
+      ],
+      "impact": "Resource exhaustion, increased cloud costs, potential data breach, service degradation",
+      "detection_methods": [
+        "Container monitoring",
+        "Resource usage analysis",
+        "Network traffic monitoring",
+        "Image scanning"
+      ],
+      "mitigation_strategies": [
+        "Use trusted container images",
+        "Implement resource limits",
+        "Monitor container performance",
+        "Scan images for vulnerabilities"
+      ],
+      "educational_examples": [
+        "Docker mining containers",
+        "Kubernetes mining pods",
+        "Compromised base images",
+        "Mining container orchestration"
+      ]
+    }
+  },
+  "security_tools": {
+    "edr": {
+      "tool_name": "Endpoint Detection and Response (EDR)",
+      "description": "Security tools that monitor and respond to threats on endpoints in real-time.",
+      "configuration_examples": [
+        "Process monitoring rules",
+        "Network connection alerts",
+        "File system monitoring",
+        "Registry change detection"
+      ],
+      "detection_rules": [
+        "High CPU usage by unknown processes",
+        "Connections to known mining pools",
+        "Suspicious file modifications",
+        "Unusual process creation patterns"
+      ],
+      "best_practices": [
+        "Enable real-time monitoring",
+        "Configure appropriate alert thresholds",
+        "Regular rule updates",
+        "Integration with SIEM systems"
+      ],
+      "educational_notes": [
+        "EDR tools provide comprehensive endpoint visibility",
+        "Real-time monitoring is essential for threat detection",
+        "Custom rules can be created for specific threats",
+        "Integration with other security tools enhances detection"
+      ]
+    },
+    "antivirus": {
+      "tool_name": "Antivirus Software",
+      "description": "Software that detects and removes malicious programs from systems.",
+      "configuration_examples": [
+        "Real-time scanning",
+        "Scheduled full system scans",
+        "Quarantine settings",
+        "Exclusion lists"
+      ],
+      "detection_rules": [
+        "Known mining malware signatures",
+        "Suspicious behavior patterns",
+        "Heuristic analysis",
+        "Sandbox analysis"
+      ],
+      "best_practices": [
+        "Keep virus definitions updated",
+        "Enable real-time protection",
+        "Regular full system scans",
+        "Configure appropriate exclusions"
+      ],
+      "educational_notes": [
+        "Antivirus software is essential but not sufficient",
+        "Regular updates are crucial for effectiveness",
+        "False positives may occur with legitimate mining software",
+        "Behavioral analysis complements signature-based detection"
+      ]
+    },
+    "ids": {
+      "tool_name": "Intrusion Detection System (IDS)",
+      "description": "Network security tools that monitor network traffic for suspicious activity.",
+      "configuration_examples": [
+        "Network traffic monitoring",
+        "Protocol analysis",
+        "Anomaly detection",
+        "Alert configuration"
+      ],
+      "detection_rules": [
+        "Connections to mining pool ports",
+        "Stratum protocol traffic",
+        "Unusual network patterns",
+        "Suspicious DNS queries"
+      ],
+      "best_practices": [
+        "Monitor all network segments",
+        "Regular rule updates",
+        "Tune alert thresholds",
+        "Integration with SIEM"
+      ],
+      "educational_notes": [
+        "IDS provides network-level threat detection",
+        "Protocol analysis can identify mining traffic",
+        "False positives require careful tuning",
+        "Integration with other tools enhances detection"
+      ]
+    },
+    "firewall": {
+      "tool_name": "Firewall",
+      "description": "Network security devices that control incoming and outgoing network traffic.",
+      "configuration_examples": [
+        "Port blocking rules",
+        "Application control",
+        "IP address filtering",
+        "Traffic logging"
+      ],
+      "detection_rules": [
+        "Block mining pool connections",
+        "Restrict suspicious applications",
+        "Monitor outbound connections",
+        "Log all traffic"
+      ],
+      "best_practices": [
+        "Default deny policies",
+        "Regular rule reviews",
+        "Monitor firewall logs",
+        "Update rules as needed"
+      ],
+      "educational_notes": [
+        "Firewalls provide network-level protection",
+        "Application control can prevent mining software execution",
+        "Regular monitoring is essential",
+        "Integration with other security tools enhances protection"
+      ]
+    }
+  },
+  "security_checklists": {
+    "user_accounts": {
+      "category": "User Account Security",
+      "items": [
+        "Use strong, unique passwords for all accounts",
+        "Enable multi-factor authentication (MFA)",
+        "Regular password changes",
+        "Monitor account activity",
+        "Limit administrative privileges",
+        "Use dedicated accounts for different purposes",
+        "Regular account reviews and cleanup"
+      ],
+      "priority": "High",
+      "implementation_difficulty": "Medium",
+      "educational_resources": [
+        "Password manager recommendations",
+        "MFA setup guides",
+        "Account security best practices",
+        "Privilege management guidelines"
+      ]
+    },
+    "privileged_access": {
+      "category": "Privileged Access Management",
+      "items": [
+        "Implement least privilege principle",
+        "Use dedicated admin accounts",
+        "Regular privilege reviews",
+        "Monitor privileged account usage",
+        "Implement just-in-time access",
+        "Use privileged access management (PAM) tools",
+        "Regular access audits"
+      ],
+      "priority": "Critical",
+      "implementation_difficulty": "High",
+      "educational_resources": [
+        "PAM tool recommendations",
+        "Privilege escalation prevention",
+        "Admin account security",
+        "Access control best practices"
+      ]
+    },
+    "system_configurations": {
+      "category": "System Configuration Security",
+      "items": [
+        "Keep systems and software updated",
+        "Disable unnecessary services",
+        "Configure secure defaults",
+        "Implement application whitelisting",
+        "Enable security logging",
+        "Configure resource limits",
+        "Regular security assessments"
+      ],
+      "priority": "High",
+      "implementation_difficulty": "Medium",
+      "educational_resources": [
+        "System hardening guides",
+        "Security configuration templates",
+        "Baseline security standards",
+        "Configuration management tools"
+      ]
+    }
+  },
+  "log_analysis_queries": {
+    "suspicious_processes": {
+      "query_name": "Suspicious Process Detection",
+      "description": "Detect processes that may be related to mining activity",
+      "query_syntax": "\n                index=windows sourcetype=WinEventLog:Security EventCode=4688 \n                | search \"xmrig\" OR \"miner\" OR \"crypto\" OR \"hash\"\n                | table _time host user process_name command_line\n                ",
+      "platform": "Splunk",
+      "educational_purpose": "Identify processes that may be mining software",
+      "expected_results": "List of processes with mining-related names or commands"
+    },
+    "high_cpu_usage": {
+      "query_name": "High CPU Usage Detection",
+      "description": "Detect processes with unusually high CPU usage",
+      "query_syntax": "\n                index=performance sourcetype=perfmon:Processor \n                | where CPU_Usage > 80\n                | join type=inner host, _time \n                [search index=windows sourcetype=WinEventLog:Security EventCode=4688]\n                | table _time host process_name CPU_Usage\n                ",
+      "platform": "Splunk",
+      "educational_purpose": "Identify processes consuming excessive CPU resources",
+      "expected_results": "List of processes with high CPU usage over time"
+    },
+    "mining_pool_connections": {
+      "query_name": "Mining Pool Connection Detection",
+      "description": "Detect network connections to known mining pools",
+      "query_syntax": "\n                index=network sourcetype=firewall \n                | search \"pool\" OR \"stratum\" OR \"3333\" OR \"14444\"\n                | lookup mining_pools.csv pool_address OUTPUT pool_name\n                | table _time src_ip dest_ip dest_port pool_name\n                ",
+      "platform": "Splunk",
+      "educational_purpose": "Identify connections to mining pool servers",
+      "expected_results": "List of network connections to mining pools"
+    },
+    "suspicious_registry": {
+      "query_name": "Suspicious Registry Changes",
+      "description": "Detect registry modifications that may indicate mining software installation",
+      "query_syntax": "\n                index=windows sourcetype=WinEventLog:Security EventCode=4657\n                | search \"miner\" OR \"xmrig\" OR \"crypto\"\n                | table _time host user registry_key new_value\n                ",
+      "platform": "Splunk",
+      "educational_purpose": "Identify registry changes related to mining software",
+      "expected_results": "List of registry modifications with mining-related content"
+    }
+  },
+  "yara_rules": {
+    "mining_software": "\nrule Mining_Software_Detection {\n    meta:\n        description = \"Detect common mining software\"\n        author = \"Educational Example\"\n        date = \"2024\"\n        purpose = \"Educational - for defensive analysis only\"\n    \n    strings:\n        $xmrig = \"xmrig\" nocase\n        $t_rex = \"t-rex\" nocase\n        $teamred = \"teamredminer\" nocase\n        $mining = \"mining\" nocase\n        $stratum = \"stratum\" nocase\n        $pool = \"pool\" nocase\n    \n    condition:\n        any of ($xmrig, $t_rex, $teamred, $mining, $stratum, $pool)\n}\n",
+    "cryptojacking_indicators": "\nrule Cryptojacking_Indicators {\n    meta:\n        description = \"Detect cryptojacking indicators\"\n        author = \"Educational Example\"\n        date = \"2024\"\n        purpose = \"Educational - for defensive analysis only\"\n    \n    strings:\n        $coinhive = \"coinhive\" nocase\n        $cryptoloot = \"cryptoloot\" nocase\n        $webminer = \"webminer\" nocase\n        $mining_js = \"mining.js\" nocase\n        $worker_js = \"worker.js\" nocase\n    \n    condition:\n        any of ($coinhive, $cryptoloot, $webminer, $mining_js, $worker_js)\n}\n"
+  },
+  "sigma_rules": {
+    "high_cpu_usage": "\ntitle: High CPU Usage Detection\nid: high-cpu-usage-001\ndescription: Detect processes with unusually high CPU usage\nauthor: Educational Example\ndate: 2024/01/01\ntags:\n    - attack.defense_evasion\n    - attack.execution\nlogsource:\n    product: windows\n    service: system\ndetection:\n    selection:\n        EventID: 4688\n        ProcessName:\n            - 'xmrig.exe'\n            - 't-rex.exe'\n            - 'teamredminer.exe'\n    condition: selection\nfalsepositives:\n    - Legitimate mining software (if authorized)\nlevel: medium\n",
+    "mining_pool_connections": "\ntitle: Mining Pool Connection Detection\nid: mining-pool-connection-001\ndescription: Detect connections to known mining pools\nauthor: Educational Example\ndate: 2024/01/01\ntags:\n    - attack.command_and_control\nlogsource:\n    product: windows\n    service: security\ndetection:\n    selection:\n        EventID: 5156\n        DestinationPort:\n            - 3333\n            - 14444\n            - 10032\n    condition: selection\nfalsepositives:\n    - Legitimate mining operations (if authorized)\nlevel: high\n"
+  },
+  "defensive_playbook": {
+    "incident_response": {
+      "detection": [
+        "Monitor system performance for unusual CPU usage",
+        "Check for unknown processes in task manager",
+        "Review network connections for mining pool traffic",
+        "Analyze system logs for suspicious activity"
+      ],
+      "containment": [
+        "Isolate affected systems from network",
+        "Stop suspicious processes",
+        "Block mining pool connections",
+        "Disable compromised accounts"
+      ],
+      "eradication": [
+        "Remove mining software and related files",
+        "Clean registry entries",
+        "Remove persistence mechanisms",
+        "Update security controls"
+      ],
+      "recovery": [
+        "Restore systems from clean backups",
+        "Update passwords and access controls",
+        "Implement additional monitoring",
+        "Conduct post-incident review"
+      ]
+    },
+    "prevention": [
+      "Implement application whitelisting",
+      "Use endpoint detection and response (EDR)",
+      "Configure network monitoring",
+      "Regular security awareness training",
+      "Keep systems and software updated"
+    ]
+  },
+  "educational_objectives": [
+    "Understand cryptojacking threats and attack vectors",
+    "Learn about security tools and their configurations",
+    "Implement security best practices and checklists",
+    "Develop log analysis and threat detection skills",
+    "Create incident response procedures",
+    "Build defensive capabilities against mining threats"
+  ]
+}

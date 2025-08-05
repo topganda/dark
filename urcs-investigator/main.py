@@ -136,6 +136,13 @@ Examples:
     forensic_parser.add_argument('--scan', action='store_true', help='Run comprehensive forensic scan')
     forensic_parser.add_argument('--report', action='store_true', help='Generate forensic report')
 
+    # Educational suite command
+    education_parser = subparsers.add_parser('education', help='Educational suite for mining and cryptocurrency analysis')
+    education_parser.add_argument('--demo', action='store_true', help='Run comprehensive educational demo')
+    education_parser.add_argument('--module', choices=['mining', 'cybersecurity', 'system', 'privacy'], help='Specific educational module')
+    education_parser.add_argument('--path', choices=['beginner', 'intermediate', 'advanced'], help='Learning path')
+    education_parser.add_argument('--report', action='store_true', help='Generate educational report')
+
     # Global options
     parser.add_argument('--verbose', '-v', action='store_true', help='Enable verbose logging')
     parser.add_argument('--debug', action='store_true', help='Enable debug mode')
@@ -185,6 +192,8 @@ Examples:
         run_warranty_checker(args, config)
     elif args.command == 'forensic':
         run_forensic_awareness(args, config)
+    elif args.command == 'education':
+        run_educational_suite(args, config)
     else:
         parser.print_help()
 
@@ -628,6 +637,78 @@ def run_forensic_awareness(args, config):
         print("💡 Install required dependencies: pip install psutil wmi")
     except Exception as e:
         print(f"❌ Forensic awareness error: {e}")
+
+
+def run_educational_suite(args, config):
+    """Run educational suite for mining and cryptocurrency analysis."""
+    try:
+        from src.education.educational_suite import EducationalSuite
+        from src.education.mining_education import demo_mining_education
+        from src.education.cybersecurity_awareness import demo_cybersecurity_awareness
+        from src.education.system_administration import demo_system_administration
+        from src.education.privacy_protection import demo_privacy_protection
+        
+        if args.demo:
+            print("🎓 Running Comprehensive Educational Suite Demo...")
+            print("💡 This demonstrates educational content only")
+            print("🚫 NO ACTUAL MINING, ATTACKS, OR MALICIOUS ACTIVITIES OCCUR")
+            print()
+            
+            suite = EducationalSuite()
+            success = suite.run_comprehensive_demo()
+            
+            if success:
+                print("✅ Educational suite demo completed successfully!")
+            else:
+                print("❌ Educational suite demo failed")
+                
+        elif args.module:
+            print(f"📚 Running {args.module} educational module...")
+            
+            if args.module == 'mining':
+                demo_mining_education()
+            elif args.module == 'cybersecurity':
+                demo_cybersecurity_awareness()
+            elif args.module == 'system':
+                demo_system_administration()
+            elif args.module == 'privacy':
+                demo_privacy_protection()
+            else:
+                print(f"❌ Unknown module: {args.module}")
+                
+        elif args.path:
+            print(f"🛤️ Generating learning path for {args.path} level...")
+            
+            suite = EducationalSuite()
+            learning_plan = suite.generate_learning_plan(args.path)
+            
+            if "error" in learning_plan:
+                print(f"❌ Failed to generate learning plan: {learning_plan['error']}")
+                return
+            
+            print(f"✅ Learning plan generated for {learning_plan['path_name']}")
+            print(f"📅 Duration: {learning_plan['duration']}")
+            print(f"📚 Modules: {len(learning_plan['modules'])}")
+            print(f"📋 Objectives: {len(learning_plan['learning_objectives'])}")
+            
+        elif args.report:
+            print("📄 Generating comprehensive educational report...")
+            
+            suite = EducationalSuite()
+            report_path = suite.generate_comprehensive_report()
+            
+            if report_path:
+                print(f"✅ Educational report generated: {report_path}")
+            else:
+                print("❌ Failed to generate educational report")
+        else:
+            print("❌ Please specify --demo, --module, --path, or --report")
+            
+    except ImportError as e:
+        print(f"❌ Failed to import educational suite: {e}")
+        print("💡 Educational modules are included in the toolkit")
+    except Exception as e:
+        print(f"❌ Educational suite error: {e}")
 
 
 if __name__ == "__main__":
