@@ -32,3 +32,32 @@
 2025-08-05 17:57:00,908 - src.utils.validator - WARNING - No explicit investigation authorization found
 2025-08-05 17:57:21,481 - src.utils.validator - WARNING - No explicit investigation authorization found
 2025-08-05 17:57:33,792 - src.utils.validator - WARNING - No explicit investigation authorization found
+2025-08-05 18:02:49,393 - src.utils.validator - WARNING - No explicit investigation authorization found
+2025-08-05 18:03:24,446 - src.utils.validator - WARNING - No explicit investigation authorization found
+2025-08-05 18:03:40,453 - src.utils.hardware_optimizer - WARNING - EMERGENCY STOP ACTIVATED - Zeroing all mining activity
+2025-08-05 18:03:48,897 - src.utils.validator - WARNING - No explicit investigation authorization found
+2025-08-05 18:03:48,900 - src.utils.warranty_checker - ERROR - smartctl parsing failed: [Errno 2] No such file or directory: 'smartctl'
+2025-08-05 18:03:48,900 - src.utils.warranty_checker - ERROR - Basic drive info failed: [Errno 2] No such file or directory: '/dev/root'
+2025-08-05 18:03:48,901 - src.utils.warranty_checker - ERROR - smartctl parsing failed: [Errno 2] No such file or directory: 'smartctl'
+2025-08-05 18:03:48,901 - src.utils.warranty_checker - ERROR - Basic drive info failed: [Errno 2] No such file or directory: '/dev/root'
+2025-08-05 18:03:48,903 - src.utils.warranty_checker - ERROR - smartctl parsing failed: [Errno 2] No such file or directory: 'smartctl'
+2025-08-05 18:03:48,903 - src.utils.warranty_checker - ERROR - Basic drive info failed: [Errno 2] No such file or directory: '/dev/root'
+2025-08-05 18:03:48,904 - src.utils.warranty_checker - ERROR - smartctl parsing failed: [Errno 2] No such file or directory: 'smartctl'
+2025-08-05 18:03:48,904 - src.utils.warranty_checker - ERROR - Basic drive info failed: [Errno 2] No such file or directory: '/dev/root'
+2025-08-05 18:03:48,905 - src.utils.warranty_checker - ERROR - smartctl parsing failed: [Errno 2] No such file or directory: 'smartctl'
+2025-08-05 18:03:48,905 - src.utils.warranty_checker - ERROR - Basic drive info failed: [Errno 2] No such file or directory: '/dev/root'
+2025-08-05 18:03:48,906 - src.utils.warranty_checker - ERROR - smartctl parsing failed: [Errno 2] No such file or directory: 'smartctl'
+2025-08-05 18:03:48,906 - src.utils.warranty_checker - ERROR - Basic drive info failed: [Errno 2] No such file or directory: '/dev/root'
+2025-08-05 18:04:12,291 - src.utils.validator - WARNING - No explicit investigation authorization found
+2025-08-05 18:05:22,898 - src.utils.validator - WARNING - No explicit investigation authorization found
+2025-08-05 18:08:14,158 - src.utils.validator - WARNING - No explicit investigation authorization found
+2025-08-05 18:08:14,164 - src.analysis.static_analyzer - WARNING - Failed to load YARA rule yara_rules/urcs_detection.yar: yara_rules/urcs_detection.yar(126): unreferenced string "$service_masquerade"
+2025-08-05 18:08:14,165 - src.analysis.behavioral_analyzer - ERROR - Service analysis failed: [Errno 2] No such file or directory: 'powershell'
+2025-08-05 18:08:14,165 - src.analysis.behavioral_analyzer - ERROR - Scheduled task analysis failed: [Errno 2] No such file or directory: 'schtasks'
+2025-08-05 18:08:14,165 - src.analysis.network_analyzer - ERROR - Current connection analysis failed: [Errno 2] No such file or directory: 'netstat'
+2025-08-05 18:08:14,166 - src.analysis.network_analyzer - ERROR - DNS query analysis failed: [Errno 2] No such file or directory: 'nslookup'
+2025-08-05 18:08:14,166 - src.analysis.network_analyzer - ERROR - Current connection analysis failed: [Errno 2] No such file or directory: 'netstat'
+2025-08-05 18:08:14,166 - src.analysis.network_analyzer - ERROR - Current connection analysis failed: [Errno 2] No such file or directory: 'netstat'
+2025-08-05 18:08:14,166 - src.analysis.network_analyzer - ERROR - Current connection analysis failed: [Errno 2] No such file or directory: 'netstat'
+2025-08-05 18:08:21,615 - src.utils.validator - WARNING - No explicit investigation authorization found
+2025-08-05 18:08:26,193 - src.utils.validator - WARNING - No explicit investigation authorization found

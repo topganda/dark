@@ -40,7 +40,6 @@ rule urcs_detection {
         // 6. Self-deletion
         $delete_file = "DeleteFile" nocase
         $delete_file_w = "DeleteFileW" nocase
-        $remove_item = "Remove-Item" nocase
         $self_delete = "self-delete" nocase
         
         // 7. Watchdog thread and CPU throttling
@@ -53,7 +52,6 @@ rule urcs_detection {
         $battery_status = "GetSystemPowerStatus" nocase
         $ac_power = "AC power" nocase
         $battery_power = "battery" nocase
-        $idle_time = "idle" nocase
         
         // 9. Obfuscated Monero wallet & pool
         $monero_wallet = "49d3f" nocase
@@ -198,25 +196,21 @@ rule urcs_evasion {
         $battery_status = "GetSystemPowerStatus" nocase
         $ac_power = "AC power" nocase
         $battery_power = "battery" nocase
-        $idle_time = "idle time" nocase
         $idle_5_min = "5 min" nocase
         
         // Self-deletion after injection
         $delete_file = "DeleteFile" nocase
         $delete_file_w = "DeleteFileW" nocase
-        $remove_item = "Remove-Item" nocase
         $self_delete = "self-delete" nocase
         $after_injection = "after injection" nocase
         
         // Process injection
         $virtual_alloc = "VirtualAllocEx" nocase
         $write_process = "WriteProcessMemory" nocase
-        $create_remote = "CreateRemoteThread" nocase
         $process_hollow = "process hollow" nocase
         
         // Explorer.exe targeting
         $explorer_exe = "explorer.exe" nocase
-        $hollow_explorer = "hollow explorer" nocase
     
     condition:
         uint16(0) == 0x5A4D and 

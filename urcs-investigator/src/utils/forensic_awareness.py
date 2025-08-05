@@ -802,18 +802,18 @@ class ForensicAwareness:
             
             # Generate recommendations
             recommendations = self._generate_forensic_recommendations(all_artifacts)
-             
-             return {
-                 "timestamp": datetime.now().isoformat(),
-                 "artifacts_found": len(all_artifacts),
-                 "alerts_generated": len(alerts),
-                 "risk_level": self._determine_overall_risk(risk_scores),
-                 "artifacts": [asdict(artifact) for artifact in all_artifacts],
-                 "alerts": [asdict(alert) for alert in alerts],
-                 "risk_scores": risk_scores,
-                 "recommendations": recommendations,
-                 "detection_vectors": {k: {sk: asdict(sv) for sk, sv in sv.items()} for k, sv in self.detection_vectors.items()}
-             }
+            
+            return {
+                "timestamp": datetime.now().isoformat(),
+                "artifacts_found": len(all_artifacts),
+                "alerts_generated": len(alerts),
+                "risk_level": self._determine_overall_risk(risk_scores),
+                "artifacts": [asdict(artifact) for artifact in all_artifacts],
+                "alerts": [asdict(alert) for alert in alerts],
+                "risk_scores": risk_scores,
+                "recommendations": recommendations,
+                "detection_vectors": {k: {sk: asdict(sv) for sk, sv in sv.items()} for k, sv in self.detection_vectors.items()}
+            }
             
         except Exception as e:
             self.logger.error(f"Comprehensive forensic scan failed: {e}")

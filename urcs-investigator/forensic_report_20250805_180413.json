@@ -1,0 +1,1305 @@
+{
+  "timestamp": "2025-08-05T18:04:14.416132",
+  "artifacts_found": 51,
+  "alerts_generated": 1,
+  "risk_level": "MINIMAL",
+  "artifacts": [
+    {
+      "category": "Operating System",
+      "vector": "Registry Persistence",
+      "description": "Registry persistence mechanisms should be monitored",
+      "severity": "high",
+      "detection_method": "Registry analysis",
+      "tools": [
+        "RegRipper",
+        "Autoruns64"
+      ],
+      "mitigation": "Use legitimate services, avoid suspicious names",
+      "timestamp": "2025-08-05 18:04:14.365318"
+    },
+    {
+      "category": "Operating System",
+      "vector": "Scheduled Tasks",
+      "description": "Scheduled task persistence should be monitored",
+      "severity": "high",
+      "detection_method": "Task scheduler analysis",
+      "tools": [
+        "schtasks",
+        "Autoruns64"
+      ],
+      "mitigation": "Use legitimate task names, avoid suspicious scheduling",
+      "timestamp": "2025-08-05 18:04:14.365323"
+    },
+    {
+      "category": "Operating System",
+      "vector": "Event Logs",
+      "description": "Windows event logs should be monitored for suspicious activity",
+      "severity": "high",
+      "detection_method": "Event log analysis",
+      "tools": [
+        "wevtutil",
+        "Event Viewer"
+      ],
+      "mitigation": "Use legitimate installation methods, avoid PowerShell scripts",
+      "timestamp": "2025-08-05 18:04:14.365325"
+    },
+    {
+      "category": "Operating System",
+      "vector": "Prefetch / AmCache",
+      "description": "Prefetch and AmCache should be monitored for suspicious executables",
+      "severity": "medium",
+      "detection_method": "Prefetch analysis",
+      "tools": [
+        "Prefetch Explorer",
+        "AmCache Parser"
+      ],
+      "mitigation": "Use legitimate executables, avoid suspicious names",
+      "timestamp": "2025-08-05 18:04:14.365326"
+    },
+    {
+      "category": "Network Telemetry",
+      "vector": "DNS Queries",
+      "description": "DNS queries to mining-related domains should be monitored",
+      "severity": "high",
+      "detection_method": "DNS log analysis",
+      "tools": [
+        "nslookup",
+        "dig",
+        "DNS monitoring"
+      ],
+      "mitigation": "Use DoH/DoT, use different domains, VPN",
+      "timestamp": "2025-08-05 18:04:14.367851"
+    },
+    {
+      "category": "Social & Human",
+      "vector": "Suspicious Files",
+      "description": "Suspicious file found: _composeArgsRight.js",
+      "severity": "medium",
+      "detection_method": "File system analysis",
+      "tools": [
+        "File analysis",
+        "EXIF analysis"
+      ],
+      "mitigation": "Remove suspicious files, don't post evidence",
+      "timestamp": "2025-08-05 18:04:14.373672"
+    },
+    {
+      "category": "Social & Human",
+      "vector": "Suspicious Files",
+      "description": "Suspicious file found: flowRight.js",
+      "severity": "medium",
+      "detection_method": "File system analysis",
+      "tools": [
+        "File analysis",
+        "EXIF analysis"
+      ],
+      "mitigation": "Remove suspicious files, don't post evidence",
+      "timestamp": "2025-08-05 18:04:14.373680"
+    },
+    {
+      "category": "Social & Human",
+      "vector": "Suspicious Files",
+      "description": "Suspicious file found: _baseEachRight.js",
+      "severity": "medium",
+      "detection_method": "File system analysis",
+      "tools": [
+        "File analysis",
+        "EXIF analysis"
+      ],
+      "mitigation": "Remove suspicious files, don't post evidence",
+      "timestamp": "2025-08-05 18:04:14.373683"
+    },
+    {
+      "category": "Social & Human",
+      "vector": "Suspicious Files",
+      "description": "Suspicious file found: forEachRight.js",
+      "severity": "medium",
+      "detection_method": "File system analysis",
+      "tools": [
+        "File analysis",
+        "EXIF analysis"
+      ],
+      "mitigation": "Remove suspicious files, don't post evidence",
+      "timestamp": "2025-08-05 18:04:14.373712"
+    },
+    {
+      "category": "Social & Human",
+      "vector": "Suspicious Files",
+      "description": "Suspicious file found: rangeRight.js",
+      "severity": "medium",
+      "detection_method": "File system analysis",
+      "tools": [
+        "File analysis",
+        "EXIF analysis"
+      ],
+      "mitigation": "Remove suspicious files, don't post evidence",
+      "timestamp": "2025-08-05 18:04:14.373729"
+    },
+    {
+      "category": "Social & Human",
+      "vector": "Suspicious Files",
+      "description": "Suspicious file found: forOwnRight.js",
+      "severity": "medium",
+      "detection_method": "File system analysis",
+      "tools": [
+        "File analysis",
+        "EXIF analysis"
+      ],
+      "mitigation": "Remove suspicious files, don't post evidence",
+      "timestamp": "2025-08-05 18:04:14.373738"
+    },
+    {
+      "category": "Social & Human",
+      "vector": "Suspicious Files",
+      "description": "Suspicious file found: dropRight.js",
+      "severity": "medium",
+      "detection_method": "File system analysis",
+      "tools": [
+        "File analysis",
+        "EXIF analysis"
+      ],
+      "mitigation": "Remove suspicious files, don't post evidence",
+      "timestamp": "2025-08-05 18:04:14.373741"
+    },
+    {
+      "category": "Social & Human",
+      "vector": "Suspicious Files",
+      "description": "Suspicious file found: _baseForRight.js",
+      "severity": "medium",
+      "detection_method": "File system analysis",
+      "tools": [
+        "File analysis",
+        "EXIF analysis"
+      ],
+      "mitigation": "Remove suspicious files, don't post evidence",
+      "timestamp": "2025-08-05 18:04:14.373744"
+    },
+    {
+      "category": "Social & Human",
+      "vector": "Suspicious Files",
+      "description": "Suspicious file found: _baseForOwnRight.js",
+      "severity": "medium",
+      "detection_method": "File system analysis",
+      "tools": [
+        "File analysis",
+        "EXIF analysis"
+      ],
+      "mitigation": "Remove suspicious files, don't post evidence",
+      "timestamp": "2025-08-05 18:04:14.373760"
+    },
+    {
+      "category": "Social & Human",
+      "vector": "Suspicious Files",
+      "description": "Suspicious file found: _arrayReduceRight.js",
+      "severity": "medium",
+      "detection_method": "File system analysis",
+      "tools": [
+        "File analysis",
+        "EXIF analysis"
+      ],
+      "mitigation": "Remove suspicious files, don't post evidence",
+      "timestamp": "2025-08-05 18:04:14.373763"
+    },
+    {
+      "category": "Social & Human",
+      "vector": "Suspicious Files",
+      "description": "Suspicious file found: takeRightWhile.js",
+      "severity": "medium",
+      "detection_method": "File system analysis",
+      "tools": [
+        "File analysis",
+        "EXIF analysis"
+      ],
+      "mitigation": "Remove suspicious files, don't post evidence",
+      "timestamp": "2025-08-05 18:04:14.373770"
+    },
+    {
+      "category": "Social & Human",
+      "vector": "Suspicious Files",
+      "description": "Suspicious file found: _arrayEachRight.js",
+      "severity": "medium",
+      "detection_method": "File system analysis",
+      "tools": [
+        "File analysis",
+        "EXIF analysis"
+      ],
+      "mitigation": "Remove suspicious files, don't post evidence",
+      "timestamp": "2025-08-05 18:04:14.373775"
+    },
+    {
+      "category": "Social & Human",
+      "vector": "Suspicious Files",
+      "description": "Suspicious file found: takeRight.js",
+      "severity": "medium",
+      "detection_method": "File system analysis",
+      "tools": [
+        "File analysis",
+        "EXIF analysis"
+      ],
+      "mitigation": "Remove suspicious files, don't post evidence",
+      "timestamp": "2025-08-05 18:04:14.373782"
+    },
+    {
+      "category": "Social & Human",
+      "vector": "Suspicious Files",
+      "description": "Suspicious file found: partialRight.js",
+      "severity": "medium",
+      "detection_method": "File system analysis",
+      "tools": [
+        "File analysis",
+        "EXIF analysis"
+      ],
+      "mitigation": "Remove suspicious files, don't post evidence",
+      "timestamp": "2025-08-05 18:04:14.373785"
+    },
+    {
+      "category": "Social & Human",
+      "vector": "Suspicious Files",
+      "description": "Suspicious file found: eachRight.js",
+      "severity": "medium",
+      "detection_method": "File system analysis",
+      "tools": [
+        "File analysis",
+        "EXIF analysis"
+      ],
+      "mitigation": "Remove suspicious files, don't post evidence",
+      "timestamp": "2025-08-05 18:04:14.373787"
+    },
+    {
+      "category": "Social & Human",
+      "vector": "Suspicious Files",
+      "description": "Suspicious file found: dropRightWhile.js",
+      "severity": "medium",
+      "detection_method": "File system analysis",
+      "tools": [
+        "File analysis",
+        "EXIF analysis"
+      ],
+      "mitigation": "Remove suspicious files, don't post evidence",
+      "timestamp": "2025-08-05 18:04:14.373797"
+    },
+    {
+      "category": "Social & Human",
+      "vector": "Suspicious Files",
+      "description": "Suspicious file found: reduceRight.js",
+      "severity": "medium",
+      "detection_method": "File system analysis",
+      "tools": [
+        "File analysis",
+        "EXIF analysis"
+      ],
+      "mitigation": "Remove suspicious files, don't post evidence",
+      "timestamp": "2025-08-05 18:04:14.373800"
+    },
+    {
+      "category": "Social & Human",
+      "vector": "Suspicious Files",
+      "description": "Suspicious file found: forInRight.js",
+      "severity": "medium",
+      "detection_method": "File system analysis",
+      "tools": [
+        "File analysis",
+        "EXIF analysis"
+      ],
+      "mitigation": "Remove suspicious files, don't post evidence",
+      "timestamp": "2025-08-05 18:04:14.373802"
+    },
+    {
+      "category": "Social & Human",
+      "vector": "Suspicious Files",
+      "description": "Suspicious file found: curryRight.js",
+      "severity": "medium",
+      "detection_method": "File system analysis",
+      "tools": [
+        "File analysis",
+        "EXIF analysis"
+      ],
+      "mitigation": "Remove suspicious files, don't post evidence",
+      "timestamp": "2025-08-05 18:04:14.373805"
+    },
+    {
+      "category": "Social & Human",
+      "vector": "Suspicious Files",
+      "description": "Suspicious file found: flowRight.js",
+      "severity": "medium",
+      "detection_method": "File system analysis",
+      "tools": [
+        "File analysis",
+        "EXIF analysis"
+      ],
+      "mitigation": "Remove suspicious files, don't post evidence",
+      "timestamp": "2025-08-05 18:04:14.373983"
+    },
+    {
+      "category": "Social & Human",
+      "vector": "Suspicious Files",
+      "description": "Suspicious file found: curryRightN.js",
+      "severity": "medium",
+      "detection_method": "File system analysis",
+      "tools": [
+        "File analysis",
+        "EXIF analysis"
+      ],
+      "mitigation": "Remove suspicious files, don't post evidence",
+      "timestamp": "2025-08-05 18:04:14.373997"
+    },
+    {
+      "category": "Social & Human",
+      "vector": "Suspicious Files",
+      "description": "Suspicious file found: forEachRight.js",
+      "severity": "medium",
+      "detection_method": "File system analysis",
+      "tools": [
+        "File analysis",
+        "EXIF analysis"
+      ],
+      "mitigation": "Remove suspicious files, don't post evidence",
+      "timestamp": "2025-08-05 18:04:14.374002"
+    },
+    {
+      "category": "Social & Human",
+      "vector": "Suspicious Files",
+      "description": "Suspicious file found: rangeStepRight.js",
+      "severity": "medium",
+      "detection_method": "File system analysis",
+      "tools": [
+        "File analysis",
+        "EXIF analysis"
+      ],
+      "mitigation": "Remove suspicious files, don't post evidence",
+      "timestamp": "2025-08-05 18:04:14.374006"
+    },
+    {
+      "category": "Social & Human",
+      "vector": "Suspicious Files",
+      "description": "Suspicious file found: rangeRight.js",
+      "severity": "medium",
+      "detection_method": "File system analysis",
+      "tools": [
+        "File analysis",
+        "EXIF analysis"
+      ],
+      "mitigation": "Remove suspicious files, don't post evidence",
+      "timestamp": "2025-08-05 18:04:14.374012"
+    },
+    {
+      "category": "Social & Human",
+      "vector": "Suspicious Files",
+      "description": "Suspicious file found: forOwnRight.js",
+      "severity": "medium",
+      "detection_method": "File system analysis",
+      "tools": [
+        "File analysis",
+        "EXIF analysis"
+      ],
+      "mitigation": "Remove suspicious files, don't post evidence",
+      "timestamp": "2025-08-05 18:04:14.374017"
+    },
+    {
+      "category": "Social & Human",
+      "vector": "Suspicious Files",
+      "description": "Suspicious file found: dropRight.js",
+      "severity": "medium",
+      "detection_method": "File system analysis",
+      "tools": [
+        "File analysis",
+        "EXIF analysis"
+      ],
+      "mitigation": "Remove suspicious files, don't post evidence",
+      "timestamp": "2025-08-05 18:04:14.374020"
+    },
+    {
+      "category": "Social & Human",
+      "vector": "Suspicious Files",
+      "description": "Suspicious file found: takeRightWhile.js",
+      "severity": "medium",
+      "detection_method": "File system analysis",
+      "tools": [
+        "File analysis",
+        "EXIF analysis"
+      ],
+      "mitigation": "Remove suspicious files, don't post evidence",
+      "timestamp": "2025-08-05 18:04:14.374035"
+    },
+    {
+      "category": "Social & Human",
+      "vector": "Suspicious Files",
+      "description": "Suspicious file found: takeRight.js",
+      "severity": "medium",
+      "detection_method": "File system analysis",
+      "tools": [
+        "File analysis",
+        "EXIF analysis"
+      ],
+      "mitigation": "Remove suspicious files, don't post evidence",
+      "timestamp": "2025-08-05 18:04:14.374041"
+    },
+    {
+      "category": "Social & Human",
+      "vector": "Suspicious Files",
+      "description": "Suspicious file found: partialRight.js",
+      "severity": "medium",
+      "detection_method": "File system analysis",
+      "tools": [
+        "File analysis",
+        "EXIF analysis"
+      ],
+      "mitigation": "Remove suspicious files, don't post evidence",
+      "timestamp": "2025-08-05 18:04:14.374044"
+    },
+    {
+      "category": "Social & Human",
+      "vector": "Suspicious Files",
+      "description": "Suspicious file found: eachRight.js",
+      "severity": "medium",
+      "detection_method": "File system analysis",
+      "tools": [
+        "File analysis",
+        "EXIF analysis"
+      ],
+      "mitigation": "Remove suspicious files, don't post evidence",
+      "timestamp": "2025-08-05 18:04:14.374045"
+    },
+    {
+      "category": "Social & Human",
+      "vector": "Suspicious Files",
+      "description": "Suspicious file found: dropRightWhile.js",
+      "severity": "medium",
+      "detection_method": "File system analysis",
+      "tools": [
+        "File analysis",
+        "EXIF analysis"
+      ],
+      "mitigation": "Remove suspicious files, don't post evidence",
+      "timestamp": "2025-08-05 18:04:14.374051"
+    },
+    {
+      "category": "Social & Human",
+      "vector": "Suspicious Files",
+      "description": "Suspicious file found: reduceRight.js",
+      "severity": "medium",
+      "detection_method": "File system analysis",
+      "tools": [
+        "File analysis",
+        "EXIF analysis"
+      ],
+      "mitigation": "Remove suspicious files, don't post evidence",
+      "timestamp": "2025-08-05 18:04:14.374053"
+    },
+    {
+      "category": "Social & Human",
+      "vector": "Suspicious Files",
+      "description": "Suspicious file found: forInRight.js",
+      "severity": "medium",
+      "detection_method": "File system analysis",
+      "tools": [
+        "File analysis",
+        "EXIF analysis"
+      ],
+      "mitigation": "Remove suspicious files, don't post evidence",
+      "timestamp": "2025-08-05 18:04:14.374054"
+    },
+    {
+      "category": "Social & Human",
+      "vector": "Suspicious Files",
+      "description": "Suspicious file found: curryRight.js",
+      "severity": "medium",
+      "detection_method": "File system analysis",
+      "tools": [
+        "File analysis",
+        "EXIF analysis"
+      ],
+      "mitigation": "Remove suspicious files, don't post evidence",
+      "timestamp": "2025-08-05 18:04:14.374057"
+    },
+    {
+      "category": "Social & Human",
+      "vector": "Suspicious Files",
+      "description": "Suspicious file found: reduceRight.js",
+      "severity": "medium",
+      "detection_method": "File system analysis",
+      "tools": [
+        "File analysis",
+        "EXIF analysis"
+      ],
+      "mitigation": "Remove suspicious files, don't post evidence",
+      "timestamp": "2025-08-05 18:04:14.374884"
+    },
+    {
+      "category": "Social & Human",
+      "vector": "Suspicious Files",
+      "description": "Suspicious file found: CopyrightNotice.txt",
+      "severity": "medium",
+      "detection_method": "File system analysis",
+      "tools": [
+        "File analysis",
+        "EXIF analysis"
+      ],
+      "mitigation": "Remove suspicious files, don't post evidence",
+      "timestamp": "2025-08-05 18:04:14.376691"
+    },
+    {
+      "category": "Social & Human",
+      "vector": "Suspicious Files",
+      "description": "Suspicious file found: addOriginToSpan.d.ts.map",
+      "severity": "medium",
+      "detection_method": "File system analysis",
+      "tools": [
+        "File analysis",
+        "EXIF analysis"
+      ],
+      "mitigation": "Remove suspicious files, don't post evidence",
+      "timestamp": "2025-08-05 18:04:14.382085"
+    },
+    {
+      "category": "Social & Human",
+      "vector": "Suspicious Files",
+      "description": "Suspicious file found: addOriginToSpan.d.ts.map",
+      "severity": "medium",
+      "detection_method": "File system analysis",
+      "tools": [
+        "File analysis",
+        "EXIF analysis"
+      ],
+      "mitigation": "Remove suspicious files, don't post evidence",
+      "timestamp": "2025-08-05 18:04:14.382638"
+    },
+    {
+      "category": "Social & Human",
+      "vector": "Suspicious Files",
+      "description": "Suspicious file found: addOriginToSpan.js",
+      "severity": "medium",
+      "detection_method": "File system analysis",
+      "tools": [
+        "File analysis",
+        "EXIF analysis"
+      ],
+      "mitigation": "Remove suspicious files, don't post evidence",
+      "timestamp": "2025-08-05 18:04:14.382800"
+    },
+    {
+      "category": "Social & Human",
+      "vector": "Suspicious Files",
+      "description": "Suspicious file found: addOriginToSpan.js",
+      "severity": "medium",
+      "detection_method": "File system analysis",
+      "tools": [
+        "File analysis",
+        "EXIF analysis"
+      ],
+      "mitigation": "Remove suspicious files, don't post evidence",
+      "timestamp": "2025-08-05 18:04:14.382961"
+    },
+    {
+      "category": "Social & Human",
+      "vector": "Suspicious Files",
+      "description": "Suspicious file found: addOriginToSpan.d.ts.map",
+      "severity": "medium",
+      "detection_method": "File system analysis",
+      "tools": [
+        "File analysis",
+        "EXIF analysis"
+      ],
+      "mitigation": "Remove suspicious files, don't post evidence",
+      "timestamp": "2025-08-05 18:04:14.395892"
+    },
+    {
+      "category": "Social & Human",
+      "vector": "Suspicious Files",
+      "description": "Suspicious file found: addOriginToSpan.d.ts.map",
+      "severity": "medium",
+      "detection_method": "File system analysis",
+      "tools": [
+        "File analysis",
+        "EXIF analysis"
+      ],
+      "mitigation": "Remove suspicious files, don't post evidence",
+      "timestamp": "2025-08-05 18:04:14.396424"
+    },
+    {
+      "category": "Social & Human",
+      "vector": "Suspicious Files",
+      "description": "Suspicious file found: addOriginToSpan.js",
+      "severity": "medium",
+      "detection_method": "File system analysis",
+      "tools": [
+        "File analysis",
+        "EXIF analysis"
+      ],
+      "mitigation": "Remove suspicious files, don't post evidence",
+      "timestamp": "2025-08-05 18:04:14.396588"
+    },
+    {
+      "category": "Social & Human",
+      "vector": "Suspicious Files",
+      "description": "Suspicious file found: addOriginToSpan.js",
+      "severity": "medium",
+      "detection_method": "File system analysis",
+      "tools": [
+        "File analysis",
+        "EXIF analysis"
+      ],
+      "mitigation": "Remove suspicious files, don't post evidence",
+      "timestamp": "2025-08-05 18:04:14.396737"
+    },
+    {
+      "category": "Social & Human",
+      "vector": "Suspicious Files",
+      "description": "Suspicious file found: .dockerignore",
+      "severity": "medium",
+      "detection_method": "File system analysis",
+      "tools": [
+        "File analysis",
+        "EXIF analysis"
+      ],
+      "mitigation": "Remove suspicious files, don't post evidence",
+      "timestamp": "2025-08-05 18:04:14.399970"
+    },
+    {
+      "category": "Social & Human",
+      "vector": "Suspicious Files",
+      "description": "Suspicious file found: twitterfeed.js",
+      "severity": "medium",
+      "detection_method": "File system analysis",
+      "tools": [
+        "File analysis",
+        "EXIF analysis"
+      ],
+      "mitigation": "Remove suspicious files, don't post evidence",
+      "timestamp": "2025-08-05 18:04:14.408443"
+    }
+  ],
+  "alerts": [
+    {
+      "alert_type": "HIGH_FORENSIC_ARTIFACTS",
+      "severity": "high",
+      "category": "Forensic Detection",
+      "description": "Found 4 high-severity forensic artifacts",
+      "evidence": {
+        "artifacts": [
+          {
+            "category": "Operating System",
+            "vector": "Registry Persistence",
+            "description": "Registry persistence mechanisms should be monitored",
+            "severity": "high",
+            "detection_method": "Registry analysis",
+            "tools": [
+              "RegRipper",
+              "Autoruns64"
+            ],
+            "mitigation": "Use legitimate services, avoid suspicious names",
+            "timestamp": "2025-08-05 18:04:14.365318"
+          },
+          {
+            "category": "Operating System",
+            "vector": "Scheduled Tasks",
+            "description": "Scheduled task persistence should be monitored",
+            "severity": "high",
+            "detection_method": "Task scheduler analysis",
+            "tools": [
+              "schtasks",
+              "Autoruns64"
+            ],
+            "mitigation": "Use legitimate task names, avoid suspicious scheduling",
+            "timestamp": "2025-08-05 18:04:14.365323"
+          },
+          {
+            "category": "Operating System",
+            "vector": "Event Logs",
+            "description": "Windows event logs should be monitored for suspicious activity",
+            "severity": "high",
+            "detection_method": "Event log analysis",
+            "tools": [
+              "wevtutil",
+              "Event Viewer"
+            ],
+            "mitigation": "Use legitimate installation methods, avoid PowerShell scripts",
+            "timestamp": "2025-08-05 18:04:14.365325"
+          },
+          {
+            "category": "Network Telemetry",
+            "vector": "DNS Queries",
+            "description": "DNS queries to mining-related domains should be monitored",
+            "severity": "high",
+            "detection_method": "DNS log analysis",
+            "tools": [
+              "nslookup",
+              "dig",
+              "DNS monitoring"
+            ],
+            "mitigation": "Use DoH/DoT, use different domains, VPN",
+            "timestamp": "2025-08-05 18:04:14.367851"
+          }
+        ]
+      },
+      "recommendations": [
+        "Review high-severity artifacts",
+        "Implement mitigation strategies",
+        "Monitor for additional artifacts"
+      ],
+      "timestamp": "2025-08-05 18:04:14.416103"
+    }
+  ],
+  "risk_scores": {
+    "hardware": 0.0,
+    "operating_system": 24.999999999999996,
+    "network": 0.0,
+    "power": 0.0,
+    "social": 0.0,
+    "overall": 4.999999999999999
+  },
+  "recommendations": [
+    "\ud83d\udd0d Forensic Awareness Recommendations:",
+    "   - Use legitimate installation methods",
+    "   - Avoid suspicious service names and registry entries",
+    "   - Monitor event logs for suspicious activity",
+    "   - Use VPN for network traffic",
+    "   - Implement traffic encryption",
+    "   - Monitor DNS queries and network connections",
+    "   - Remove EXIF data from photos",
+    "   - Avoid posting hardware setups online",
+    "   - Use legitimate communication channels",
+    "   - Ensure compliance with local laws and regulations",
+    "   - Use legitimate software and hardware",
+    "   - Maintain proper documentation for all activities"
+  ],
+  "detection_vectors": {
+    "hardware_firmware": {
+      "gpu_bios_mining_flag": {
+        "category": "Hardware & Firmware",
+        "vector_name": "GPU BIOS Mining Flag",
+        "description": "Vendor RMA portal reads 'mining workload' bit in GPU BIOS",
+        "detection_methods": [
+          "Vendor RMA portal",
+          "BIOS dump analysis",
+          "Firmware inspection"
+        ],
+        "forensic_tools": [
+          "GPU-Z",
+          "AIDA64",
+          "Vendor diagnostic tools"
+        ],
+        "legal_implications": [
+          "Warranty void",
+          "RMA rejection",
+          "Legal liability"
+        ],
+        "mitigation_strategies": [
+          "Use non-mining GPUs",
+          "Avoid warranty claims",
+          "Use legitimate workloads"
+        ],
+        "risk_level": "critical"
+      },
+      "ssd_smart_counters": {
+        "category": "Hardware & Firmware",
+        "vector_name": "SSD SMART Counters",
+        "description": "Power-on hours > 8760, temperature > 75\u00b0C, wear leveling > 90%",
+        "detection_methods": [
+          "SMART attribute monitoring",
+          "Vendor diagnostic tools"
+        ],
+        "forensic_tools": [
+          "smartctl",
+          "CrystalDiskInfo",
+          "HDDScan"
+        ],
+        "legal_implications": [
+          "Warranty void",
+          "RMA rejection"
+        ],
+        "mitigation_strategies": [
+          "Use enterprise SSDs",
+          "Monitor wear levels",
+          "Proper cooling"
+        ],
+        "risk_level": "high"
+      },
+      "cpu_microcode_patterns": {
+        "category": "Hardware & Firmware",
+        "vector_name": "CPU Microcode Patterns",
+        "description": "Intel PT / AMD IBS logs reveal sustained RandomX patterns",
+        "detection_methods": [
+          "Performance counter analysis",
+          "Microcode inspection"
+        ],
+        "forensic_tools": [
+          "Intel PT",
+          "AMD IBS",
+          "Performance monitoring"
+        ],
+        "legal_implications": [
+          "Hardware warranty issues"
+        ],
+        "mitigation_strategies": [
+          "Use diverse workloads",
+          "Avoid sustained patterns"
+        ],
+        "risk_level": "medium"
+      },
+      "fan_rpm_cycles": {
+        "category": "Hardware & Firmware",
+        "vector_name": "Fan RPM Cycles",
+        "description": "BIOS logs > 1M revolutions in 3 months \u2192 mining signature",
+        "detection_methods": [
+          "BIOS fan logs",
+          "Thermal monitoring"
+        ],
+        "forensic_tools": [
+          "BIOS inspection",
+          "Fan monitoring tools"
+        ],
+        "legal_implications": [
+          "Hardware warranty issues"
+        ],
+        "mitigation_strategies": [
+          "Proper cooling",
+          "Fan curve optimization"
+        ],
+        "risk_level": "medium"
+      }
+    },
+    "operating_system": {
+      "windows_registry": {
+        "category": "Operating System",
+        "vector_name": "Windows Registry Artifacts",
+        "description": "HKCU\\...\\Run\\ctfmon, HKLM\\...\\Services\\gupdatem",
+        "detection_methods": [
+          "Registry analysis",
+          "Autoruns monitoring"
+        ],
+        "forensic_tools": [
+          "RegRipper",
+          "Autoruns64",
+          "Registry Explorer"
+        ],
+        "legal_implications": [
+          "Forensic evidence",
+          "Legal discovery"
+        ],
+        "mitigation_strategies": [
+          "Use legitimate services",
+          "Avoid suspicious names"
+        ],
+        "risk_level": "high"
+      },
+      "scheduled_tasks": {
+        "category": "Operating System",
+        "vector_name": "Scheduled Tasks",
+        "description": "Scheduled task persistence mechanisms",
+        "detection_methods": [
+          "Task scheduler analysis",
+          "CSV export"
+        ],
+        "forensic_tools": [
+          "schtasks",
+          "Autoruns64",
+          "Task Scheduler"
+        ],
+        "legal_implications": [
+          "Forensic evidence",
+          "Persistence detection"
+        ],
+        "mitigation_strategies": [
+          "Use legitimate task names",
+          "Avoid suspicious scheduling"
+        ],
+        "risk_level": "high"
+      },
+      "event_logs": {
+        "category": "Operating System",
+        "vector_name": "Windows Event Logs",
+        "description": "Event ID 7045 (service install), ID 4104 (PowerShell script)",
+        "detection_methods": [
+          "Event log analysis",
+          "SIEM correlation"
+        ],
+        "forensic_tools": [
+          "wevtutil",
+          "Event Viewer",
+          "Log Parser"
+        ],
+        "legal_implications": [
+          "Audit trail",
+          "Forensic evidence"
+        ],
+        "mitigation_strategies": [
+          "Use legitimate installation methods",
+          "Avoid PowerShell scripts"
+        ],
+        "risk_level": "high"
+      },
+      "prefetch_amcache": {
+        "category": "Operating System",
+        "vector_name": "Prefetch / AmCache",
+        "description": "Executable hash + first-run timestamp (30-day retention)",
+        "detection_methods": [
+          "Prefetch analysis",
+          "AmCache inspection"
+        ],
+        "forensic_tools": [
+          "Prefetch Explorer",
+          "AmCache Parser"
+        ],
+        "legal_implications": [
+          "Execution history",
+          "Forensic timeline"
+        ],
+        "mitigation_strategies": [
+          "Use legitimate executables",
+          "Avoid suspicious names"
+        ],
+        "risk_level": "medium"
+      },
+      "crash_dumps": {
+        "category": "Operating System",
+        "vector_name": "Crash Dumps",
+        "description": "C:\\Windows\\Minidump\\*.dmp contains full process list & stack",
+        "detection_methods": [
+          "Crash dump analysis",
+          "WER inspection"
+        ],
+        "forensic_tools": [
+          "WinDbg",
+          "Volatility",
+          "Crash dump analyzer"
+        ],
+        "legal_implications": [
+          "Process evidence",
+          "Forensic analysis"
+        ],
+        "mitigation_strategies": [
+          "Prevent crashes",
+          "Use stable software"
+        ],
+        "risk_level": "medium"
+      }
+    },
+    "network_telemetry": {
+      "isp_dpi": {
+        "category": "Network Telemetry",
+        "vector_name": "ISP Deep Packet Inspection",
+        "description": "Stratum protocol (ports 3333, 4444, 10032) logged for 6-24 months",
+        "detection_methods": [
+          "ISP DPI logs",
+          "Traffic analysis"
+        ],
+        "forensic_tools": [
+          "Wireshark",
+          "Zeek",
+          "Network monitoring"
+        ],
+        "legal_implications": [
+          "ISP subpoena",
+          "Legal discovery"
+        ],
+        "mitigation_strategies": [
+          "Use VPN",
+          "Encrypt traffic",
+          "Use different ports"
+        ],
+        "risk_level": "critical"
+      },
+      "dns_queries": {
+        "category": "Network Telemetry",
+        "vector_name": "DNS Queries",
+        "description": "api.ipify.org, gulf.moneroocean.stream \u2192 unencrypted logs",
+        "detection_methods": [
+          "DNS log analysis",
+          "ISP monitoring"
+        ],
+        "forensic_tools": [
+          "nslookup",
+          "dig",
+          "DNS monitoring"
+        ],
+        "legal_implications": [
+          "ISP subpoena",
+          "DNS logging"
+        ],
+        "mitigation_strategies": [
+          "Use DoH/DoT",
+          "Use different domains",
+          "VPN"
+        ],
+        "risk_level": "high"
+      },
+      "pool_api_logs": {
+        "category": "Network Telemetry",
+        "vector_name": "Pool API Logs",
+        "description": "Wallet + IP + user-agent \u2192 subpoena to pool",
+        "detection_methods": [
+          "Pool log analysis",
+          "API monitoring"
+        ],
+        "forensic_tools": [
+          "Pool API",
+          "Network analysis"
+        ],
+        "legal_implications": [
+          "Pool subpoena",
+          "Identity revelation"
+        ],
+        "mitigation_strategies": [
+          "Use different wallets",
+          "Rotate IPs",
+          "Use legitimate user-agents"
+        ],
+        "risk_level": "critical"
+      },
+      "cloud_provider": {
+        "category": "Network Telemetry",
+        "vector_name": "Cloud Provider Logs",
+        "description": "AWS / Azure flow logs if VM is mining",
+        "detection_methods": [
+          "Cloud flow logs",
+          "Provider monitoring"
+        ],
+        "forensic_tools": [
+          "Cloud monitoring",
+          "Flow log analysis"
+        ],
+        "legal_implications": [
+          "Provider subpoena",
+          "Account termination"
+        ],
+        "mitigation_strategies": [
+          "Use legitimate workloads",
+          "Comply with ToS"
+        ],
+        "risk_level": "high"
+      }
+    },
+    "power_utility": {
+      "smart_meter": {
+        "category": "Power & Utility",
+        "vector_name": "Smart Meter Data",
+        "description": "15-min kWh spikes \u2192 subpoena to utility",
+        "detection_methods": [
+          "Utility monitoring",
+          "Power analysis"
+        ],
+        "forensic_tools": [
+          "Smart meter data",
+          "Power monitoring"
+        ],
+        "legal_implications": [
+          "Utility subpoena",
+          "Legal investigation"
+        ],
+        "mitigation_strategies": [
+          "Use efficient hardware",
+          "Spread load",
+          "Legitimate workloads"
+        ],
+        "risk_level": "critical"
+      },
+      "thermal_camera": {
+        "category": "Power & Utility",
+        "vector_name": "Thermal Camera Detection",
+        "description": "Heat signature from GPU/CPU during mining visible to drones",
+        "detection_methods": [
+          "Thermal imaging",
+          "IR detection"
+        ],
+        "forensic_tools": [
+          "Thermal cameras",
+          "IR sensors"
+        ],
+        "legal_implications": [
+          "Physical evidence",
+          "Neighbor reports"
+        ],
+        "mitigation_strategies": [
+          "Proper cooling",
+          "Insulation",
+          "Legitimate workloads"
+        ],
+        "risk_level": "medium"
+      },
+      "fire_department": {
+        "category": "Power & Utility",
+        "vector_name": "Fire Department Alerts",
+        "description": "Overheated rigs may trigger fire alarms \u2192 inspection",
+        "detection_methods": [
+          "Fire alarm monitoring",
+          "Thermal detection"
+        ],
+        "forensic_tools": [
+          "Fire alarms",
+          "Thermal sensors"
+        ],
+        "legal_implications": [
+          "Emergency response",
+          "Evidence seizure"
+        ],
+        "mitigation_strategies": [
+          "Proper cooling",
+          "Fire safety",
+          "Legitimate workloads"
+        ],
+        "risk_level": "high"
+      }
+    },
+    "blockchain_exchange": {
+      "pool_payout_logs": {
+        "category": "Blockchain & Exchange",
+        "vector_name": "Pool Payout Logs",
+        "description": "Wallet \u2192 exchange KYC \u2192 identity revealed",
+        "detection_methods": [
+          "Blockchain analysis",
+          "Exchange KYC"
+        ],
+        "forensic_tools": [
+          "Chainalysis",
+          "Blockchain explorers"
+        ],
+        "legal_implications": [
+          "Identity revelation",
+          "Tax implications"
+        ],
+        "mitigation_strategies": [
+          "Use privacy coins",
+          "Mix transactions",
+          "Legitimate mining"
+        ],
+        "risk_level": "critical"
+      },
+      "monero_view_key": {
+        "category": "Blockchain & Exchange",
+        "vector_name": "Monero View Key",
+        "description": "If shared \u2192 all transactions de-anonymized",
+        "detection_methods": [
+          "View key analysis",
+          "Transaction correlation"
+        ],
+        "forensic_tools": [
+          "Monero tools",
+          "Blockchain analysis"
+        ],
+        "legal_implications": [
+          "Privacy breach",
+          "Transaction history"
+        ],
+        "mitigation_strategies": [
+          "Never share view keys",
+          "Use legitimate wallets"
+        ],
+        "risk_level": "critical"
+      },
+      "exchange_1099": {
+        "category": "Blockchain & Exchange",
+        "vector_name": "Exchange 1099 Forms",
+        "description": "Earnings > $600 triggers IRS Form 1099-MISC",
+        "detection_methods": [
+          "Tax monitoring",
+          "Exchange reporting"
+        ],
+        "forensic_tools": [
+          "Tax records",
+          "Exchange reports"
+        ],
+        "legal_implications": [
+          "Tax audit",
+          "Legal compliance"
+        ],
+        "mitigation_strategies": [
+          "Proper tax reporting",
+          "Legitimate mining"
+        ],
+        "risk_level": "high"
+      }
+    },
+    "social_human": {
+      "exif_gps": {
+        "category": "Social & Human",
+        "vector_name": "EXIF GPS Data",
+        "description": "Photos of rigs posted on Discord / Twitter \u2192 GPS location",
+        "detection_methods": [
+          "EXIF analysis",
+          "Social media monitoring"
+        ],
+        "forensic_tools": [
+          "exiftool",
+          "Social media analysis"
+        ],
+        "legal_implications": [
+          "Location revelation",
+          "Physical evidence"
+        ],
+        "mitigation_strategies": [
+          "Remove EXIF data",
+          "Don't post photos",
+          "Use legitimate setups"
+        ],
+        "risk_level": "medium"
+      },
+      "discord_logs": {
+        "category": "Social & Human",
+        "vector_name": "Discord Server Logs",
+        "description": "Server message history (permanent) \u2192 IP + username",
+        "detection_methods": [
+          "Discord log analysis",
+          "Server monitoring"
+        ],
+        "forensic_tools": [
+          "Discord API",
+          "Server logs"
+        ],
+        "legal_implications": [
+          "Identity revelation",
+          "Communication history"
+        ],
+        "mitigation_strategies": [
+          "Use legitimate channels",
+          "Avoid suspicious discussions"
+        ],
+        "risk_level": "high"
+      },
+      "reddit_posts": {
+        "category": "Social & Human",
+        "vector_name": "Reddit Posts",
+        "description": "Hardware flex posts \u2192 metadata + IP",
+        "detection_methods": [
+          "Reddit analysis",
+          "Post metadata"
+        ],
+        "forensic_tools": [
+          "Reddit API",
+          "Post analysis"
+        ],
+        "legal_implications": [
+          "Identity revelation",
+          "Public evidence"
+        ],
+        "mitigation_strategies": [
+          "Don't post setups",
+          "Use legitimate discussions"
+        ],
+        "risk_level": "medium"
+      },
+      "invoice_warranty": {
+        "category": "Social & Human",
+        "vector_name": "Invoice / Warranty Claims",
+        "description": "Serial number \u2192 mining flag on vendor portal",
+        "detection_methods": [
+          "Vendor portal analysis",
+          "Warranty tracking"
+        ],
+        "forensic_tools": [
+          "Vendor portals",
+          "Warranty systems"
+        ],
+        "legal_implications": [
+          "Warranty void",
+          "Legal liability"
+        ],
+        "mitigation_strategies": [
+          "Use legitimate hardware",
+          "Avoid warranty claims"
+        ],
+        "risk_level": "high"
+      }
+    }
+  }
+}
