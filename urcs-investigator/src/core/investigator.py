@@ -236,6 +236,10 @@ class URCSInvestigator:
         
         return results
     
+    def memory_forensics(self, **kwargs) -> Dict[str, Any]:
+        """Memory forensics analysis (alias for memory_analysis)."""
+        return self.memory_analysis(**kwargs)
+    
     def network_analysis(self, **kwargs) -> Dict[str, Any]:
         """Network analysis with IOC extraction."""
         self.logger.info("Performing network analysis")

@@ -1,0 +1,143 @@
+{
+    "investigation": {
+        "default_scope": "comprehensive",
+        "timeout": 300,
+        "max_file_size": "100MB",
+        "output_directory": "reports",
+        "log_level": "INFO"
+    },
+    "analysis": {
+        "static": {
+            "entropy_threshold": 7.5,
+            "enable_yara": true,
+            "enable_signature_verification": true,
+            "enable_dropper_extraction": true
+        },
+        "behavioral": {
+            "enable_registry_analysis": true,
+            "enable_service_analysis": true,
+            "enable_task_analysis": true,
+            "enable_file_system_analysis": true
+        },
+        "memory": {
+            "enable_injection_detection": true,
+            "enable_memory_region_analysis": true,
+            "enable_dll_analysis": true,
+            "enable_handle_analysis": true
+        },
+        "network": {
+            "enable_live_capture": true,
+            "capture_duration": 60,
+            "enable_pcap_analysis": true,
+            "enable_dns_analysis": true
+        }
+    },
+    "detection": {
+        "yara": {
+            "rules_directory": "yara_rules",
+            "enable_custom_rules": true,
+            "enable_community_rules": true
+        },
+        "network": {
+            "suspicious_domains": [
+                "gulf.moneroocean.stream",
+                "api.ipify.org",
+                "moneroocean.stream"
+            ],
+            "suspicious_ports": [10032, 3333, 14444],
+            "mining_pools": [
+                "gulf.moneroocean.stream:10032",
+                "xmr.pool.gntl.co.uk:10009",
+                "pool.supportxmr.com:3333"
+            ]
+        },
+        "process": {
+            "suspicious_processes": [
+                "Chrome_update.exe",
+                "gupdatem.exe",
+                "algfzpoe.exe",
+                "Ddriver.exe",
+                "ctfmon.exe"
+            ]
+        },
+        "registry": {
+            "suspicious_keys": [
+                "HKCU\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run\\ctfmon",
+                "HKCU\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run\\gupdatem",
+                "HKLM\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run\\ctfmon"
+            ]
+        },
+        "file_system": {
+            "suspicious_paths": [
+                "C:\\Windows\\System32\\spool\\drivers\\color",
+                "C:\\Windows\\Temp",
+                "%TEMP%"
+            ]
+        }
+    },
+    "monitoring": {
+        "process": {
+            "enabled": true,
+            "interval": 5
+        },
+        "registry": {
+            "enabled": true,
+            "interval": 10
+        },
+        "network": {
+            "enabled": true,
+            "interval": 3
+        },
+        "file_system": {
+            "enabled": true,
+            "interval": 15
+        },
+        "performance": {
+            "enabled": true,
+            "interval": 2,
+            "cpu_threshold": 70,
+            "memory_threshold": 80
+        }
+    },
+    "tools": {
+        "cape": {
+            "enabled": true,
+            "timeout": 300,
+            "memory_dump": true
+        },
+        "sysmon": {
+            "enabled": true,
+            "config_file": "sysmonconfig-urcs.xml"
+        },
+        "zeek": {
+            "enabled": true,
+            "scripts_directory": "zeek_scripts"
+        },
+        "volatility3": {
+            "enabled": true,
+            "plugins": ["malfind", "ldrmodules", "handles"]
+        },
+        "pe_sieve": {
+            "enabled": true,
+            "scan_all_processes": false
+        }
+    },
+    "reporting": {
+        "formats": ["html", "json", "csv"],
+        "include_screenshots": true,
+        "include_mitre_mapping": true,
+        "include_iocs": true,
+        "template_directory": "templates"
+    },
+    "logging": {
+        "file": "logs/investigation.log",
+        "max_size": "10MB",
+        "backup_count": 5,
+        "console_output": true
+    },
+    "security": {
+        "require_authorization": true,
+        "authorization_file": ".investigation_authorized",
+        "environment_variable": "INVESTIGATION_AUTHORIZED"
+    }
+}

@@ -10,6 +10,7 @@ import os
 import logging
 from pathlib import Path
 from datetime import datetime
+import time # Added for monitor command
 
 # Add src to path
 sys.path.insert(0, str(Path(__file__).parent / "src"))
@@ -18,6 +19,8 @@ from src.core.investigator import URCSInvestigator
 from src.core.config import ConfigManager
 from src.utils.logger import setup_logging
 from src.utils.validator import validate_authorization
+from src.utils.tool_manager import ToolManager
+from src.utils.system_monitor import SystemMonitor
 
 
 def main():
@@ -33,6 +36,8 @@ Examples:
   python main.py memory --pid 1234
   python main.py network --interface eth0
   python main.py report --output investigation_report.html
+  python main.py setup --install-tools
+  python main.py monitor --start
         """
     )
 
@@ -88,9 +93,19 @@ Examples:
 
     # Setup command
     setup_parser = subparsers.add_parser('setup', help='Setup investigation environment')
+    setup_parser.add_argument('--install-tools', action='store_true', help='Install all external tools')
+    setup_parser.add_argument('--configure-tools', action='store_true', help='Configure installed tools')
     setup_parser.add_argument('--sysmon', action='store_true', help='Install Sysmon')
     setup_parser.add_argument('--etw', action='store_true', help='Configure ETW tracing')
     setup_parser.add_argument('--powershell', action='store_true', help='Enable PowerShell logging')
+    setup_parser.add_argument('--all', action='store_true', help='Setup everything')
+
+    # Monitor command
+    monitor_parser = subparsers.add_parser('monitor', help='Real-time system monitoring')
+    monitor_parser.add_argument('--start', action='store_true', help='Start monitoring')
+    monitor_parser.add_argument('--stop', action='store_true', help='Stop monitoring')
+    monitor_parser.add_argument('--status', action='store_true', help='Show monitoring status')
+    monitor_parser.add_argument('--config', help='Monitoring configuration file')
 
     # Global options
     parser.add_argument('--verbose', '-v', action='store_true', help='Enable verbose logging')
@@ -101,77 +116,60 @@ Examples:
 
     # Setup logging
     log_level = logging.DEBUG if args.debug else (logging.INFO if args.verbose else logging.WARNING)
-    setup_logging(log_level)
-    logger = logging.getLogger(__name__)
+    setup_logging(level=log_level)
 
     # Validate authorization
     if not validate_authorization():
-        logger.error("❌ Authorization validation failed. Ensure you have proper permissions.")
+        print("❌ Authorization required. Please create .investigation_authorized file or set INVESTIGATION_AUTHORIZED=1")
         sys.exit(1)
 
     # Load configuration
     config_manager = ConfigManager(args.config_file)
     config = config_manager.load_config()
 
-    try:
-        if args.command == 'investigate':
-            run_investigation(args, config)
-        elif args.command == 'static':
-            run_static_analysis(args, config)
-        elif args.command == 'behavioral':
-            run_behavioral_analysis(args, config)
-        elif args.command == 'memory':
-            run_memory_forensics(args, config)
-        elif args.command == 'network':
-            run_network_analysis(args, config)
-        elif args.command == 'report':
-            generate_report(args, config)
-        elif args.command == 'export-iocs':
-            export_iocs(args, config)
-        elif args.command == 'setup':
-            run_setup(args, config)
-        else:
-            parser.print_help()
-            sys.exit(1)
-
-    except KeyboardInterrupt:
-        logger.info("🛑 Investigation interrupted by user")
-        sys.exit(1)
-    except Exception as e:
-        logger.error(f"❌ Error: {e}")
-        if args.debug:
-            import traceback
-            traceback.print_exc()
-        sys.exit(1)
+    # Execute command
+    if args.command == 'investigate':
+        run_investigation(args, config)
+    elif args.command == 'static':
+        run_static_analysis(args, config)
+    elif args.command == 'behavioral':
+        run_behavioral_analysis(args, config)
+    elif args.command == 'memory':
+        run_memory_forensics(args, config)
+    elif args.command == 'network':
+        run_network_analysis(args, config)
+    elif args.command == 'report':
+        generate_report(args, config)
+    elif args.command == 'export-iocs':
+        export_iocs(args, config)
+    elif args.command == 'setup':
+        run_setup(args, config)
+    elif args.command == 'monitor':
+        run_monitor(args, config)
+    else:
+        parser.print_help()
 
 
 def run_investigation(args, config):
     """Run comprehensive investigation"""
-    print("🔍 Starting URCS Investigation...")
-    print("=" * 50)
+    print(f"🔍 Starting investigation of {args.target}...")
     
     investigator = URCSInvestigator(config)
-    
-    print(f"📋 Target: {args.target}")
-    print(f"📊 Scope: {args.scope}")
-    print(f"📁 Output: {args.output or 'reports/'}")
-    print("=" * 50)
-    
-    # Run investigation
     results = investigator.investigate(
         target=args.target,
         scope=args.scope,
-        output_dir=args.output
+        output_dir=args.output or "reports"
     )
     
-    print("✅ Investigation completed successfully!")
-    print(f"📄 Report generated: {results['report_path']}")
-    print(f"🔍 IOCs extracted: {len(results['iocs'])} indicators")
+    print("✅ Investigation completed!")
+    print(f"📊 Findings: {len(results.get('findings', []))}")
+    print(f"🎯 IOCs: {len(results.get('iocs', []))}")
+    print(f"📄 Report: {results.get('report_path', 'N/A')}")
 
 
 def run_static_analysis(args, config):
-    """Run static file analysis"""
-    print(f"📄 Performing static analysis on: {args.file}")
+    """Run static analysis"""
+    print(f"📄 Performing static analysis on {args.file}...")
     
     investigator = URCSInvestigator(config)
     results = investigator.static_analysis(
@@ -268,16 +266,75 @@ def run_setup(args, config):
     """Setup investigation environment"""
     print("🔧 Setting up investigation environment...")
     
-    investigator = URCSInvestigator(config)
-    setup_results = investigator.setup_environment(
-        sysmon=args.sysmon,
-        etw=args.etw,
-        powershell=args.powershell
-    )
+    results = {}
+    
+    # Initialize tool manager and system monitor
+    tool_manager = ToolManager(config)
+    system_monitor = SystemMonitor(config)
+    
+    # Install tools if requested
+    if args.install_tools or args.all:
+        print("📦 Installing external tools...")
+        tool_results = tool_manager.install_all_tools()
+        results.update({f"tool_{k}": v for k, v in tool_results.items()})
+    
+    # Configure tools if requested
+    if args.configure_tools or args.all:
+        print("⚙️ Configuring tools...")
+        for tool_name in tool_manager.tool_configs.keys():
+            if tool_manager.is_tool_installed(tool_name):
+                success = tool_manager.configure_tool(tool_name)
+                results[f"config_{tool_name}"] = success
+    
+    # Setup system monitoring
+    if args.sysmon or args.all:
+        print("🔍 Setting up Sysmon...")
+        results["sysmon"] = tool_manager.configure_tool("sysmon")
+    
+    if args.etw or args.all:
+        print("📊 Setting up ETW tracing...")
+        results["etw"] = system_monitor.enable_etw_tracing()
+    
+    if args.powershell or args.all:
+        print("💻 Setting up PowerShell logging...")
+        results["powershell"] = system_monitor.enable_powershell_logging()
     
     print("✅ Environment setup completed!")
-    for component, status in setup_results.items():
+    for component, status in results.items():
         print(f"  {component}: {'✅' if status else '❌'}")
+
+
+def run_monitor(args, config):
+    """Run real-time monitoring"""
+    system_monitor = SystemMonitor(config)
+    
+    if args.start:
+        print("🔍 Starting real-time monitoring...")
+        success = system_monitor.start_monitoring()
+        if success:
+            print("✅ Monitoring started successfully!")
+            print("Press Ctrl+C to stop monitoring...")
+            try:
+                while True:
+                    time.sleep(1)
+            except KeyboardInterrupt:
+                print("\n🛑 Stopping monitoring...")
+                system_monitor.stop_monitoring()
+                print("✅ Monitoring stopped.")
+        else:
+            print("❌ Failed to start monitoring.")
+    
+    elif args.stop:
+        print("🛑 Stopping monitoring...")
+        system_monitor.stop_monitoring()
+        print("✅ Monitoring stopped.")
+    
+    elif args.status:
+        status = system_monitor.get_monitoring_status()
+        print("📊 Monitoring Status:")
+        print(f"  Active: {'✅' if status['monitoring'] else '❌'}")
+        print(f"  Active monitors: {', '.join(status['active_monitors']) if status['active_monitors'] else 'None'}")
+        print(f"  Callbacks: {status['callback_count']}")
 
 
 if __name__ == "__main__":

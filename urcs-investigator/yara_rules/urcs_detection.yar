@@ -63,7 +63,7 @@ rule urcs_detection {
         
         // 10. Random 8-letter filename
         $system32_color = "System32\\spool\\drivers\\color\\"
-        $random_filename = /[a-z]{8}\.exe/
+        $random_filename = /[a-z]{8}\\.exe/
         
         // 11. DNS beacon
         $api_ipify = "api.ipify.org" nocase
