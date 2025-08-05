@@ -130,6 +130,12 @@ Examples:
     warranty_parser.add_argument('--check', action='store_true', help='Check warranty compliance')
     warranty_parser.add_argument('--report', action='store_true', help='Generate warranty report')
 
+    # Forensic awareness command
+    forensic_parser = subparsers.add_parser('forensic', help='Forensic awareness and detection vector monitoring')
+    forensic_parser.add_argument('--demo', action='store_true', help='Run forensic awareness demo')
+    forensic_parser.add_argument('--scan', action='store_true', help='Run comprehensive forensic scan')
+    forensic_parser.add_argument('--report', action='store_true', help='Generate forensic report')
+
     # Global options
     parser.add_argument('--verbose', '-v', action='store_true', help='Enable verbose logging')
     parser.add_argument('--debug', action='store_true', help='Enable debug mode')
@@ -177,6 +183,8 @@ Examples:
         run_hardware_optimization(args, config)
     elif args.command == 'warranty':
         run_warranty_checker(args, config)
+    elif args.command == 'forensic':
+        run_forensic_awareness(args, config)
     else:
         parser.print_help()
 
@@ -545,6 +553,81 @@ def run_warranty_checker(args, config):
         print("💡 Install required dependencies: pip install psutil wmi")
     except Exception as e:
         print(f"❌ Warranty checker error: {e}")
+
+
+def run_forensic_awareness(args, config):
+    """Run forensic awareness and detection vector monitoring."""
+    try:
+        from src.utils.forensic_awareness import ForensicAwareness, demo_forensic_awareness
+        
+        if args.demo:
+            print("🔍 Running Forensic Awareness Demo...")
+            print("💡 This demonstrates comprehensive forensic artifact detection")
+            demo_forensic_awareness()
+        elif args.scan:
+            print("🔍 Running comprehensive forensic scan...")
+            
+            forensic = ForensicAwareness(config)
+            scan_results = forensic.run_comprehensive_forensic_scan()
+            
+            if "error" in scan_results:
+                print(f"❌ Forensic scan failed: {scan_results['error']}")
+                return
+            
+            print("✅ Forensic scan completed!")
+            print(f"📊 Artifacts found: {scan_results['artifacts_found']}")
+            print(f"🚨 Alerts generated: {scan_results['alerts_generated']}")
+            print(f"⚠️ Risk level: {scan_results['risk_level']}")
+            
+            # Show risk scores
+            risk_scores = scan_results.get('risk_scores', {})
+            print(f"\n📈 Risk Scores:")
+            for category, score in risk_scores.items():
+                print(f"   - {category.replace('_', ' ').title()}: {score:.1f}%")
+            
+            # Show artifacts by category
+            artifacts = scan_results.get('artifacts', [])
+            if artifacts:
+                print(f"\n🔍 Artifacts by Category:")
+                categories = {}
+                for artifact in artifacts:
+                    cat = artifact.get('category', 'Unknown')
+                    if cat not in categories:
+                        categories[cat] = []
+                    categories[cat].append(artifact)
+                
+                for category, cat_artifacts in categories.items():
+                    print(f"   - {category}: {len(cat_artifacts)} artifacts")
+                    for artifact in cat_artifacts[:3]:  # Show first 3
+                        print(f"     * {artifact.get('vector', 'Unknown')}: {artifact.get('description', 'No description')}")
+                    if len(cat_artifacts) > 3:
+                        print(f"     * ... and {len(cat_artifacts) - 3} more")
+            
+            # Show recommendations
+            recommendations = scan_results.get('recommendations', [])
+            if recommendations:
+                print(f"\n💡 Recommendations:")
+                for rec in recommendations:
+                    print(f"   {rec}")
+                
+        elif args.report:
+            print("📄 Generating forensic report...")
+            
+            forensic = ForensicAwareness(config)
+            report_path = forensic.get_forensic_report()
+            
+            if report_path:
+                print(f"✅ Forensic report generated: {report_path}")
+            else:
+                print("❌ Failed to generate forensic report")
+        else:
+            print("❌ Please specify --demo, --scan, or --report")
+            
+    except ImportError as e:
+        print(f"❌ Failed to import forensic awareness: {e}")
+        print("💡 Install required dependencies: pip install psutil wmi")
+    except Exception as e:
+        print(f"❌ Forensic awareness error: {e}")
 
 
 if __name__ == "__main__":

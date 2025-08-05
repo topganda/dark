@@ -27,3 +27,8 @@
 2025-08-05 17:44:08,542 - src.utils.warranty_checker - ERROR - Basic drive info failed: [Errno 2] No such file or directory: '/dev/root'
 2025-08-05 17:44:08,543 - src.utils.warranty_checker - ERROR - smartctl parsing failed: [Errno 2] No such file or directory: 'smartctl'
 2025-08-05 17:44:08,543 - src.utils.warranty_checker - ERROR - Basic drive info failed: [Errno 2] No such file or directory: '/dev/root'
+2025-08-05 17:56:49,528 - src.utils.validator - WARNING - No explicit investigation authorization found
+2025-08-05 17:56:50,660 - src.utils.forensic_awareness - ERROR - Comprehensive forensic scan failed: asdict() should be called on dataclass instances
+2025-08-05 17:57:00,908 - src.utils.validator - WARNING - No explicit investigation authorization found
+2025-08-05 17:57:21,481 - src.utils.validator - WARNING - No explicit investigation authorization found
+2025-08-05 17:57:33,792 - src.utils.validator - WARNING - No explicit investigation authorization found
