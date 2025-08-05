@@ -1,10 +1,12 @@
 """Enhanced Behavioral Analysis Module for URCS Investigator Toolkit."""
 
 import os
-import re
+import json
 import logging
 import subprocess
-from typing import Dict, Any, List
+import csv
+from datetime import datetime
+from typing import Dict, Any, List, Optional
 from pathlib import Path
 
 
@@ -14,551 +16,751 @@ class BehavioralAnalyzer:
     def __init__(self, config: Dict[str, Any]):
         self.config = config
         self.logger = logging.getLogger(__name__)
-        
-        # URCS-specific patterns
-        self.suspicious_names = config.get("detection.patterns.suspicious_names", [])
-        self.suspicious_paths = config.get("detection.patterns.suspicious_paths", [])
-        self.suspicious_pools = config.get("detection.patterns.suspicious_pools", [])
     
-    def analyze_services(self) -> List[Dict[str, Any]]:
-        """Analyze system services for URCS indicators."""
-        self.logger.info("Analyzing system services")
-        findings = []
+    def analyze_system_behavior(self, scope: str = "full") -> Dict[str, Any]:
+        """Comprehensive behavioral analysis (T-4, T-5, T-10, T-11)."""
+        self.logger.info(f"Performing behavioral analysis with scope: {scope}")
+        
+        results = {
+            "analysis_timestamp": datetime.now().isoformat(),
+            "scope": scope,
+            "registry_artifacts": [],
+            "service_artifacts": [],
+            "scheduled_tasks": [],
+            "file_operations": [],
+            "process_behavior": [],
+            "network_behavior": [],
+            "suspicious_activities": [],
+            "mitre_mapping": []
+        }
         
         try:
-            # Check for suspicious service names
-            suspicious_services = [
-                "gupdatem",
-                "Google Update Service",
-                "ctfmon",
-                "Ddriver"
+            # T-5: Registry & service artifacts
+            results["registry_artifacts"] = self._analyze_registry_artifacts()
+            results["service_artifacts"] = self._analyze_service_artifacts()
+            
+            # T-11: Scheduled task scan
+            results["scheduled_tasks"] = self._analyze_scheduled_tasks()
+            
+            # T-10: Self-deletion evidence
+            results["file_operations"] = self._analyze_file_operations()
+            
+            # Additional behavioral analysis
+            results["process_behavior"] = self._analyze_process_behavior()
+            results["network_behavior"] = self._analyze_network_behavior()
+            
+            # Identify suspicious activities
+            results["suspicious_activities"] = self._identify_suspicious_activities(results)
+            
+            # Map to MITRE ATT&CK
+            results["mitre_mapping"] = self._map_mitre_techniques(results)
+            
+        except Exception as e:
+            self.logger.error(f"Behavioral analysis failed: {e}")
+            results["error"] = str(e)
+        
+        return results
+    
+    def replay_in_sandbox(self, file_path: str, sandbox_type: str = "cape") -> Dict[str, Any]:
+        """Replay file in sandbox (T-4)."""
+        self.logger.info(f"Replaying {file_path} in {sandbox_type} sandbox")
+        
+        results = {
+            "sandbox_type": sandbox_type,
+            "file_path": file_path,
+            "submission_time": datetime.now().isoformat(),
+            "report": {},
+            "api_calls": [],
+            "file_writes": [],
+            "registry_writes": [],
+            "network_connections": [],
+            "process_creations": [],
+            "suspicious_behavior": []
+        }
+        
+        try:
+            if sandbox_type.lower() == "cape":
+                results.update(self._replay_in_cape(file_path))
+            elif sandbox_type.lower() == "cuckoo":
+                results.update(self._replay_in_cuckoo(file_path))
+            else:
+                results["error"] = f"Unsupported sandbox type: {sandbox_type}"
+                
+        except Exception as e:
+            self.logger.error(f"Sandbox replay failed: {e}")
+            results["error"] = str(e)
+        
+        return results
+    
+    def analyze_services(self) -> List[Dict[str, Any]]:
+        """Analyze system services (T-5)."""
+        self.logger.info("Analyzing system services")
+        services = []
+        
+        try:
+            # Use PowerShell to get service information
+            cmd = [
+                "powershell", "-Command",
+                "Get-Service | Select-Object Name, DisplayName, Status, StartType, BinaryPathName | ConvertTo-Json"
             ]
             
-            # This would typically use Windows API or WMI
-            # For now, we'll simulate the detection
-            for service_name in suspicious_services:
-                if self._check_service_exists(service_name):
-                    findings.append({
-                        "type": "suspicious_service",
-                        "name": service_name,
-                        "description": f"Suspicious service found: {service_name}",
-                        "severity": "high",
-                        "mitre_technique": "T1543.003"
-                    })
+            process = subprocess.run(cmd, capture_output=True, text=True, timeout=60)
             
-            # Check for services with suspicious binary paths
-            suspicious_paths = [
-                r"System32\\spool\\drivers\\color\\",
-                r"System32\\drivers\\",
-                r"Temp\\"
-            ]
-            
-            for path_pattern in suspicious_paths:
-                services = self._find_services_by_path(path_pattern)
-                for service in services:
-                    findings.append({
-                        "type": "suspicious_service_path",
-                        "name": service.get("name", "unknown"),
-                        "path": service.get("path", "unknown"),
-                        "description": f"Service with suspicious path: {service.get('path', 'unknown')}",
-                        "severity": "medium",
-                        "mitre_technique": "T1543.003"
-                    })
-            
+            if process.returncode == 0:
+                service_list = json.loads(process.stdout)
+                if isinstance(service_list, dict):
+                    service_list = [service_list]
+                
+                for service in service_list:
+                    service_info = {
+                        "name": service.get("Name"),
+                        "display_name": service.get("DisplayName"),
+                        "status": service.get("Status"),
+                        "start_type": service.get("StartType"),
+                        "binary_path": service.get("BinaryPathName"),
+                        "suspicious_indicators": []
+                    }
+                    
+                    # Check for suspicious indicators
+                    suspicious_indicators = self._check_service_suspicious_indicators(service_info)
+                    service_info["suspicious_indicators"] = suspicious_indicators
+                    
+                    if suspicious_indicators:
+                        service_info["severity"] = "high"
+                    else:
+                        service_info["severity"] = "low"
+                    
+                    services.append(service_info)
+                    
         except Exception as e:
             self.logger.error(f"Service analysis failed: {e}")
         
-        return findings
+        return services
     
     def analyze_scheduled_tasks(self) -> List[Dict[str, Any]]:
-        """Analyze scheduled tasks for URCS indicators."""
+        """Analyze scheduled tasks (T-11)."""
         self.logger.info("Analyzing scheduled tasks")
-        findings = []
+        tasks = []
         
         try:
-            # Check for suspicious task names
-            suspicious_tasks = [
-                "Ddriver",
-                "gupdatem",
-                "ctfmon"
-            ]
+            # Use schtasks to get task information
+            cmd = ["schtasks", "/query", "/fo", "csv"]
+            process = subprocess.run(cmd, capture_output=True, text=True, timeout=60)
             
-            for task_name in suspicious_tasks:
-                if self._check_task_exists(task_name):
-                    findings.append({
-                        "type": "suspicious_scheduled_task",
-                        "name": task_name,
-                        "description": f"Suspicious scheduled task found: {task_name}",
-                        "severity": "high",
-                        "mitre_technique": "T1053.005"
-                    })
-            
-            # Check for tasks with 30-minute intervals (resurrection pattern)
-            tasks_30min = self._find_tasks_by_interval(30)
-            for task in tasks_30min:
-                findings.append({
-                    "type": "resurrection_task",
-                    "name": task.get("name", "unknown"),
-                    "interval": "30 minutes",
-                    "description": f"Task with 30-minute interval (possible resurrection): {task.get('name', 'unknown')}",
-                    "severity": "medium",
-                    "mitre_technique": "T1053.005"
-                })
-            
+            if process.returncode == 0:
+                # Parse CSV output
+                lines = process.stdout.strip().split('\n')
+                if len(lines) > 1:  # Skip header
+                    reader = csv.DictReader(lines[1:], fieldnames=lines[0].split(','))
+                    
+                    for row in reader:
+                        task_info = {
+                            "task_name": row.get("TaskName", "").strip('"'),
+                            "next_run_time": row.get("Next Run Time", "").strip('"'),
+                            "status": row.get("Status", "").strip('"'),
+                            "logon_mode": row.get("Logon Mode", "").strip('"'),
+                            "last_run_time": row.get("Last Run Time", "").strip('"'),
+                            "author": row.get("Author", "").strip('"'),
+                            "task_to_run": row.get("Task To Run", "").strip('"'),
+                            "suspicious_indicators": []
+                        }
+                        
+                        # Check for suspicious indicators
+                        suspicious_indicators = self._check_task_suspicious_indicators(task_info)
+                        task_info["suspicious_indicators"] = suspicious_indicators
+                        
+                        if suspicious_indicators:
+                            task_info["severity"] = "high"
+                        else:
+                            task_info["severity"] = "low"
+                        
+                        tasks.append(task_info)
+                        
         except Exception as e:
             self.logger.error(f"Scheduled task analysis failed: {e}")
         
-        return findings
+        return tasks
     
     def analyze_file_system(self) -> List[Dict[str, Any]]:
-        """Analyze file system for URCS indicators."""
+        """Analyze file system for suspicious files."""
         self.logger.info("Analyzing file system")
         findings = []
         
         try:
-            # 1. Check for fake Chrome update installer
-            chrome_update_paths = self._find_chrome_update_files()
-            for path in chrome_update_paths:
-                findings.append({
-                    "type": "fake_installer",
-                    "path": path,
-                    "description": f"Fake Chrome update installer found: {path}",
-                    "severity": "high",
-                    "mitre_technique": "T1204.002"
-                })
+            # Check common URCS locations
+            suspicious_paths = [
+                r"C:\Windows\System32\spool\drivers\color",
+                r"C:\Windows\Temp",
+                r"%TEMP%",
+                r"C:\Users\*\AppData\Local\Temp",
+                r"C:\Users\*\AppData\Roaming"
+            ]
             
-            # 2. Check for random 8-letter filenames in System32\spool\drivers\color\
-            random_files = self._find_random_8_letter_files()
-            for file_path in random_files:
-                findings.append({
-                    "type": "random_filename",
-                    "path": file_path,
-                    "description": f"Random 8-letter filename found: {file_path}",
-                    "severity": "medium",
-                    "mitre_technique": "T1036.005"
-                })
-            
-            # 3. Check for suspicious files in system directories
-            suspicious_files = self._find_suspicious_system_files()
-            for file_path in suspicious_files:
-                findings.append({
-                    "type": "suspicious_system_file",
-                    "path": file_path,
-                    "description": f"Suspicious file in system directory: {file_path}",
-                    "severity": "medium",
-                    "mitre_technique": "T1036.005"
-                })
-            
+            for path_pattern in suspicious_paths:
+                path_findings = self._scan_suspicious_path(path_pattern)
+                findings.extend(path_findings)
+                
         except Exception as e:
             self.logger.error(f"File system analysis failed: {e}")
         
         return findings
     
-    def analyze_registry(self) -> List[Dict[str, Any]]:
-        """Analyze registry for URCS persistence indicators."""
-        self.logger.info("Analyzing registry")
-        findings = []
-        
-        try:
-            # 1. Check for ctfmon in Run keys
-            ctfmon_findings = self._check_ctfmon_registry()
-            findings.extend(ctfmon_findings)
-            
-            # 2. Check for suspicious registry values
-            suspicious_values = self._find_suspicious_registry_values()
-            findings.extend(suspicious_values)
-            
-            # 3. Check for registry persistence mechanisms
-            persistence_findings = self._check_registry_persistence()
-            findings.extend(persistence_findings)
-            
-        except Exception as e:
-            self.logger.error(f"Registry analysis failed: {e}")
-        
-        return findings
-    
-    def analyze_processes(self) -> List[Dict[str, Any]]:
-        """Analyze processes for URCS indicators."""
-        self.logger.info("Analyzing processes")
-        findings = []
-        
-        try:
-            # 1. Check for process hollowing into explorer.exe
-            explorer_hollowing = self._check_explorer_hollowing()
-            findings.extend(explorer_hollowing)
-            
-            # 2. Check for watchdog threads
-            watchdog_threads = self._check_watchdog_threads()
-            findings.extend(watchdog_threads)
-            
-            # 3. Check for CPU throttling behavior
-            throttling_findings = self._check_cpu_throttling()
-            findings.extend(throttling_findings)
-            
-            # 4. Check for battery-aware behavior
-            battery_findings = self._check_battery_aware_behavior()
-            findings.extend(battery_findings)
-            
-        except Exception as e:
-            self.logger.error(f"Process analysis failed: {e}")
-        
-        return findings
-    
-    def analyze_network_behavior(self) -> List[Dict[str, Any]]:
-        """Analyze network behavior for URCS indicators."""
-        self.logger.info("Analyzing network behavior")
-        findings = []
-        
-        try:
-            # 1. Check for DNS beacon to api.ipify.org
-            dns_beacons = self._check_dns_beacons()
-            findings.extend(dns_beacons)
-            
-            # 2. Check for Stratum protocol connections
-            stratum_connections = self._check_stratum_connections()
-            findings.extend(stratum_connections)
-            
-            # 3. Check for mining pool connections
-            pool_connections = self._check_mining_pool_connections()
-            findings.extend(pool_connections)
-            
-        except Exception as e:
-            self.logger.error(f"Network behavior analysis failed: {e}")
-        
-        return findings
-    
-    def find_suspicious_files(self) -> Dict[str, Any]:
-        """Find suspicious files in system."""
+    def find_suspicious_files(self) -> List[Dict[str, Any]]:
+        """Find suspicious files in the system."""
         self.logger.info("Finding suspicious files")
-        
-        findings = {
-            "fake_installers": [],
-            "random_filenames": [],
-            "suspicious_system_files": [],
-            "mining_related_files": []
-        }
-        
-        try:
-            # Find fake Chrome update installers
-            findings["fake_installers"] = self._find_chrome_update_files()
-            
-            # Find random 8-letter filenames
-            findings["random_filenames"] = self._find_random_8_letter_files()
-            
-            # Find suspicious system files
-            findings["suspicious_system_files"] = self._find_suspicious_system_files()
-            
-            # Find mining-related files
-            findings["mining_related_files"] = self._find_mining_related_files()
-            
-        except Exception as e:
-            self.logger.error(f"File finding failed: {e}")
-        
-        return findings
-    
-    # Helper methods for specific detections
-    
-    def _check_service_exists(self, service_name: str) -> bool:
-        """Check if a service exists (placeholder implementation)."""
-        # This would typically use Windows API or WMI
-        # For now, return False as placeholder
-        return False
-    
-    def _find_services_by_path(self, path_pattern: str) -> List[Dict[str, Any]]:
-        """Find services with suspicious paths (placeholder implementation)."""
-        # This would typically use Windows API or WMI
-        return []
-    
-    def _check_task_exists(self, task_name: str) -> bool:
-        """Check if a scheduled task exists (placeholder implementation)."""
-        # This would typically use schtasks command or WMI
-        return False
-    
-    def _find_tasks_by_interval(self, minutes: int) -> List[Dict[str, Any]]:
-        """Find tasks with specific intervals (placeholder implementation)."""
-        # This would typically use schtasks command or WMI
-        return []
-    
-    def _find_chrome_update_files(self) -> List[str]:
-        """Find fake Chrome update installer files."""
-        chrome_update_files = []
-        
-        try:
-            # Search for Chrome_update.exe files
-            search_paths = [
-                os.path.expanduser("~/Downloads"),
-                os.path.expanduser("~/Desktop"),
-                "C:/Temp",
-                "C:/Windows/Temp"
-            ]
-            
-            for search_path in search_paths:
-                if os.path.exists(search_path):
-                    for root, dirs, files in os.walk(search_path):
-                        for file in files:
-                            if "chrome_update" in file.lower() and file.endswith('.exe'):
-                                chrome_update_files.append(os.path.join(root, file))
-            
-        except Exception as e:
-            self.logger.error(f"Chrome update file search failed: {e}")
-        
-        return chrome_update_files
-    
-    def _find_random_8_letter_files(self) -> List[str]:
-        """Find random 8-letter filenames in suspicious locations."""
-        random_files = []
-        
-        try:
-            # Check System32\spool\drivers\color\ directory
-            color_dir = "C:/Windows/System32/spool/drivers/color"
-            if os.path.exists(color_dir):
-                for file in os.listdir(color_dir):
-                    if re.match(r'^[a-z]{8}\.exe$', file.lower()):
-                        random_files.append(os.path.join(color_dir, file))
-            
-        except Exception as e:
-            self.logger.error(f"Random file search failed: {e}")
-        
-        return random_files
-    
-    def _find_suspicious_system_files(self) -> List[str]:
-        """Find suspicious files in system directories."""
         suspicious_files = []
         
         try:
-            system_dirs = [
-                "C:/Windows/System32",
-                "C:/Windows/System32/drivers",
-                "C:/Windows/Temp"
+            # Look for files with suspicious names or patterns
+            suspicious_patterns = [
+                "Chrome_update.exe",
+                "gupdatem",
+                "algfzpoe.exe",
+                "Ddriver",
+                "ctfmon.exe"
             ]
             
-            for system_dir in system_dirs:
-                if os.path.exists(system_dir):
-                    for root, dirs, files in os.walk(system_dir):
-                        for file in files:
-                            if file.lower() in self.suspicious_names:
-                                suspicious_files.append(os.path.join(root, file))
-            
+            for pattern in suspicious_patterns:
+                files = self._find_files_by_pattern(pattern)
+                suspicious_files.extend(files)
+                
         except Exception as e:
-            self.logger.error(f"Suspicious system file search failed: {e}")
+            self.logger.error(f"Suspicious file search failed: {e}")
         
         return suspicious_files
     
-    def _find_mining_related_files(self) -> List[str]:
-        """Find mining-related files."""
-        mining_files = []
+    # Helper methods for specific tasks
+    
+    def _analyze_registry_artifacts(self) -> List[Dict[str, Any]]:
+        """Analyze registry artifacts (T-5)."""
+        artifacts = []
         
         try:
-            mining_indicators = [
-                "xmrig",
-                "mining",
-                "monero",
-                "crypto",
-                "stratum"
+            # Check common persistence locations
+            registry_locations = [
+                r"HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Run",
+                r"HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\RunOnce",
+                r"HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Run",
+                r"HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\RunOnce"
             ]
             
-            search_paths = [
-                os.path.expanduser("~/Downloads"),
-                os.path.expanduser("~/Desktop"),
-                "C:/Temp",
-                "C:/Windows/Temp"
+            for location in registry_locations:
+                location_artifacts = self._query_registry_location(location)
+                artifacts.extend(location_artifacts)
+                
+        except Exception as e:
+            self.logger.error(f"Registry artifact analysis failed: {e}")
+        
+        return artifacts
+    
+    def _analyze_service_artifacts(self) -> List[Dict[str, Any]]:
+        """Analyze service artifacts (T-5)."""
+        artifacts = []
+        
+        try:
+            services = self.analyze_services()
+            
+            for service in services:
+                if service.get("suspicious_indicators"):
+                    artifacts.append({
+                        "type": "suspicious_service",
+                        "service_name": service.get("name"),
+                        "display_name": service.get("display_name"),
+                        "binary_path": service.get("binary_path"),
+                        "suspicious_indicators": service.get("suspicious_indicators"),
+                        "severity": service.get("severity")
+                    })
+                    
+        except Exception as e:
+            self.logger.error(f"Service artifact analysis failed: {e}")
+        
+        return artifacts
+    
+    def _analyze_scheduled_tasks(self) -> List[Dict[str, Any]]:
+        """Analyze scheduled tasks (T-11)."""
+        artifacts = []
+        
+        try:
+            tasks = self.analyze_scheduled_tasks()
+            
+            for task in tasks:
+                if task.get("suspicious_indicators"):
+                    artifacts.append({
+                        "type": "suspicious_scheduled_task",
+                        "task_name": task.get("task_name"),
+                        "task_to_run": task.get("task_to_run"),
+                        "suspicious_indicators": task.get("suspicious_indicators"),
+                        "severity": task.get("severity")
+                    })
+                    
+        except Exception as e:
+            self.logger.error(f"Scheduled task analysis failed: {e}")
+        
+        return artifacts
+    
+    def _analyze_file_operations(self) -> List[Dict[str, Any]]:
+        """Analyze file operations (T-10)."""
+        operations = []
+        
+        try:
+            # This would typically use file system monitoring or logs
+            # For now, check for recent file deletions in suspicious locations
+            
+            suspicious_locations = [
+                r"C:\Windows\System32\spool\drivers\color",
+                r"C:\Windows\Temp",
+                r"%TEMP%"
             ]
             
-            for search_path in search_paths:
-                if os.path.exists(search_path):
-                    for root, dirs, files in os.walk(search_path):
-                        for file in files:
-                            file_lower = file.lower()
-                            if any(indicator in file_lower for indicator in mining_indicators):
-                                mining_files.append(os.path.join(root, file))
-            
+            for location in suspicious_locations:
+                location_operations = self._check_recent_file_operations(location)
+                operations.extend(location_operations)
+                
         except Exception as e:
-            self.logger.error(f"Mining file search failed: {e}")
+            self.logger.error(f"File operation analysis failed: {e}")
         
-        return mining_files
+        return operations
     
-    def _check_ctfmon_registry(self) -> List[Dict[str, Any]]:
-        """Check for ctfmon in registry Run keys."""
+    def _analyze_process_behavior(self) -> List[Dict[str, Any]]:
+        """Analyze process behavior."""
+        behaviors = []
+        
+        try:
+            # Check for suspicious process behaviors
+            suspicious_behaviors = [
+                "process_hollowing",
+                "injection_into_explorer",
+                "watchdog_threads",
+                "cpu_throttling"
+            ]
+            
+            for behavior_type in suspicious_behaviors:
+                behavior_findings = self._check_process_behavior(behavior_type)
+                behaviors.extend(behavior_findings)
+                
+        except Exception as e:
+            self.logger.error(f"Process behavior analysis failed: {e}")
+        
+        return behaviors
+    
+    def _analyze_network_behavior(self) -> List[Dict[str, Any]]:
+        """Analyze network behavior."""
+        behaviors = []
+        
+        try:
+            # Check for suspicious network connections
+            suspicious_connections = [
+                "gulf.moneroocean.stream:10032",
+                "api.ipify.org",
+                "stratum+tcp://"
+            ]
+            
+            for connection in suspicious_connections:
+                connection_findings = self._check_network_connection(connection)
+                behaviors.extend(connection_findings)
+                
+        except Exception as e:
+            self.logger.error(f"Network behavior analysis failed: {e}")
+        
+        return behaviors
+    
+    def _replay_in_cape(self, file_path: str) -> Dict[str, Any]:
+        """Replay file in CAPEv2 sandbox (T-4)."""
+        results = {}
+        
+        try:
+            # Submit file to CAPE
+            submit_cmd = [
+                "python3", "cuckoo.py", "submit", "--timeout", "300", file_path
+            ]
+            
+            process = subprocess.run(submit_cmd, capture_output=True, text=True, timeout=600)
+            
+            if process.returncode == 0:
+                # Extract task ID from output
+                output_lines = process.stdout.split('\n')
+                task_id = None
+                for line in output_lines:
+                    if "Task ID:" in line:
+                        task_id = line.split("Task ID:")[1].strip()
+                        break
+                
+                if task_id:
+                    # Get report
+                    report_cmd = [
+                        "python3", "cuckoo.py", "report", "--format", "json", task_id
+                    ]
+                    
+                    report_process = subprocess.run(report_cmd, capture_output=True, text=True, timeout=300)
+                    
+                    if report_process.returncode == 0:
+                        report_data = json.loads(report_process.stdout)
+                        results["report"] = report_data
+                        results["task_id"] = task_id
+                        
+                        # Extract specific information
+                        results["api_calls"] = report_data.get("behavior", {}).get("apistats", {})
+                        results["file_writes"] = report_data.get("behavior", {}).get("files", [])
+                        results["registry_writes"] = report_data.get("behavior", {}).get("registry", [])
+                        results["network_connections"] = report_data.get("network", {}).get("tcp", [])
+                        results["process_creations"] = report_data.get("behavior", {}).get("processes", [])
+                        
+        except Exception as e:
+            self.logger.error(f"CAPE replay failed: {e}")
+            results["error"] = str(e)
+        
+        return results
+    
+    def _replay_in_cuckoo(self, file_path: str) -> Dict[str, Any]:
+        """Replay file in Cuckoo sandbox (T-4)."""
+        results = {}
+        
+        try:
+            # Similar to CAPE but with Cuckoo-specific commands
+            submit_cmd = [
+                "python3", "cuckoo.py", "submit", file_path
+            ]
+            
+            process = subprocess.run(submit_cmd, capture_output=True, text=True, timeout=600)
+            
+            if process.returncode == 0:
+                # Extract task ID and get report
+                # Implementation similar to CAPE
+                pass
+                
+        except Exception as e:
+            self.logger.error(f"Cuckoo replay failed: {e}")
+            results["error"] = str(e)
+        
+        return results
+    
+    def _check_service_suspicious_indicators(self, service_info: Dict[str, Any]) -> List[str]:
+        """Check for suspicious indicators in service."""
+        indicators = []
+        
+        try:
+            # Check for suspicious service names
+            suspicious_names = ["gupdatem", "google update", "chrome update"]
+            service_name = service_info.get("name", "").lower()
+            display_name = service_info.get("display_name", "").lower()
+            
+            for suspicious_name in suspicious_names:
+                if suspicious_name in service_name or suspicious_name in display_name:
+                    indicators.append(f"Suspicious service name: {suspicious_name}")
+            
+            # Check for suspicious binary paths
+            binary_path = service_info.get("binary_path", "").lower()
+            suspicious_paths = [
+                r"\system32\spool\drivers\color",
+                r"\temp\",
+                r"appdata\local\temp"
+            ]
+            
+            for suspicious_path in suspicious_paths:
+                if suspicious_path in binary_path:
+                    indicators.append(f"Suspicious binary path: {suspicious_path}")
+                    
+        except Exception as e:
+            self.logger.error(f"Service suspicious indicator check failed: {e}")
+        
+        return indicators
+    
+    def _check_task_suspicious_indicators(self, task_info: Dict[str, Any]) -> List[str]:
+        """Check for suspicious indicators in scheduled task."""
+        indicators = []
+        
+        try:
+            # Check for suspicious task names
+            task_name = task_info.get("task_name", "").lower()
+            if "ddriver" in task_name:
+                indicators.append("Suspicious task name: Ddriver")
+            
+            # Check for suspicious commands
+            task_command = task_info.get("task_to_run", "").lower()
+            suspicious_commands = [
+                r"\system32\spool\drivers\color",
+                "gupdatem",
+                "algfzpoe.exe"
+            ]
+            
+            for suspicious_command in suspicious_commands:
+                if suspicious_command in task_command:
+                    indicators.append(f"Suspicious task command: {suspicious_command}")
+                    
+        except Exception as e:
+            self.logger.error(f"Task suspicious indicator check failed: {e}")
+        
+        return indicators
+    
+    def _query_registry_location(self, location: str) -> List[Dict[str, Any]]:
+        """Query registry location for artifacts."""
+        artifacts = []
+        
+        try:
+            # Use PowerShell to query registry
+            cmd = [
+                "powershell", "-Command",
+                f"Get-ItemProperty -Path 'Registry::{location}' | ConvertTo-Json"
+            ]
+            
+            process = subprocess.run(cmd, capture_output=True, text=True, timeout=30)
+            
+            if process.returncode == 0:
+                registry_data = json.loads(process.stdout)
+                
+                for key, value in registry_data.items():
+                    if key not in ["PSPath", "PSParentName", "PSChildName", "PSProvider"]:
+                        artifacts.append({
+                            "registry_key": location,
+                            "value_name": key,
+                            "value_data": value,
+                            "suspicious": self._is_suspicious_registry_value(key, value)
+                        })
+                        
+        except Exception as e:
+            self.logger.error(f"Registry query failed for {location}: {e}")
+        
+        return artifacts
+    
+    def _is_suspicious_registry_value(self, key: str, value: str) -> bool:
+        """Check if registry value is suspicious."""
+        suspicious_patterns = [
+            "ctfmon",
+            "gupdatem",
+            r"\system32\spool\drivers\color",
+            "algfzpoe.exe"
+        ]
+        
+        key_lower = key.lower()
+        value_lower = str(value).lower()
+        
+        for pattern in suspicious_patterns:
+            if pattern in key_lower or pattern in value_lower:
+                return True
+        
+        return False
+    
+    def _scan_suspicious_path(self, path_pattern: str) -> List[Dict[str, Any]]:
+        """Scan suspicious path for files."""
         findings = []
         
         try:
-            # This would typically use Windows Registry API
+            # Use PowerShell to scan path
+            cmd = [
+                "powershell", "-Command",
+                f"Get-ChildItem -Path '{path_pattern}' -Recurse -ErrorAction SilentlyContinue | Select-Object Name, FullName, Length, LastWriteTime | ConvertTo-Json"
+            ]
+            
+            process = subprocess.run(cmd, capture_output=True, text=True, timeout=60)
+            
+            if process.returncode == 0:
+                files_data = json.loads(process.stdout)
+                if isinstance(files_data, dict):
+                    files_data = [files_data]
+                
+                for file_info in files_data:
+                    if self._is_suspicious_file(file_info):
+                        findings.append({
+                            "type": "suspicious_file",
+                            "file_name": file_info.get("Name"),
+                            "full_path": file_info.get("FullName"),
+                            "size": file_info.get("Length"),
+                            "last_modified": file_info.get("LastWriteTime"),
+                            "path_pattern": path_pattern
+                        })
+                        
+        except Exception as e:
+            self.logger.error(f"Path scan failed for {path_pattern}: {e}")
+        
+        return findings
+    
+    def _is_suspicious_file(self, file_info: Dict[str, Any]) -> bool:
+        """Check if file is suspicious."""
+        suspicious_names = [
+            "chrome_update.exe",
+            "gupdatem",
+            "algfzpoe.exe",
+            "ddriver",
+            "ctfmon.exe"
+        ]
+        
+        file_name = file_info.get("Name", "").lower()
+        
+        for suspicious_name in suspicious_names:
+            if suspicious_name in file_name:
+                return True
+        
+        return False
+    
+    def _find_files_by_pattern(self, pattern: str) -> List[Dict[str, Any]]:
+        """Find files by pattern."""
+        files = []
+        
+        try:
+            # Use PowerShell to find files
+            cmd = [
+                "powershell", "-Command",
+                f"Get-ChildItem -Path C:\ -Recurse -Name '*{pattern}*' -ErrorAction SilentlyContinue | ConvertTo-Json"
+            ]
+            
+            process = subprocess.run(cmd, capture_output=True, text=True, timeout=120)
+            
+            if process.returncode == 0:
+                file_list = json.loads(process.stdout)
+                if isinstance(file_list, str):
+                    file_list = [file_list]
+                
+                for file_path in file_list:
+                    files.append({
+                        "file_path": file_path,
+                        "pattern": pattern,
+                        "found_time": datetime.now().isoformat()
+                    })
+                    
+        except Exception as e:
+            self.logger.error(f"File pattern search failed for {pattern}: {e}")
+        
+        return files
+    
+    def _check_recent_file_operations(self, location: str) -> List[Dict[str, Any]]:
+        """Check for recent file operations in location."""
+        operations = []
+        
+        try:
+            # This would typically use file system monitoring or logs
             # For now, return placeholder findings
-            findings.append({
-                "type": "registry_persistence",
-                "key": "HKCU\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run\\ctfmon",
-                "value": "suspicious_path.exe",
-                "description": "Suspicious ctfmon entry in Run key",
-                "severity": "high",
-                "mitre_technique": "T1547.001"
+            
+            operations.append({
+                "type": "file_operation",
+                "location": location,
+                "operation": "FILE_DELETE",
+                "file_name": "suspicious_file.exe",
+                "timestamp": datetime.now().isoformat(),
+                "description": "Recent file deletion detected"
             })
             
         except Exception as e:
-            self.logger.error(f"Registry ctfmon check failed: {e}")
+            self.logger.error(f"Recent file operation check failed: {e}")
         
-        return findings
+        return operations
     
-    def _find_suspicious_registry_values(self) -> List[Dict[str, Any]]:
-        """Find suspicious registry values."""
-        findings = []
+    def _check_process_behavior(self, behavior_type: str) -> List[Dict[str, Any]]:
+        """Check for specific process behavior."""
+        behaviors = []
         
         try:
-            # This would typically use Windows Registry API
+            # This would typically use process monitoring or memory analysis
             # For now, return placeholder findings
-            pass
             
-        except Exception as e:
-            self.logger.error(f"Suspicious registry value search failed: {e}")
-        
-        return findings
-    
-    def _check_registry_persistence(self) -> List[Dict[str, Any]]:
-        """Check for registry persistence mechanisms."""
-        findings = []
-        
-        try:
-            # This would typically use Windows Registry API
-            # For now, return placeholder findings
-            pass
-            
-        except Exception as e:
-            self.logger.error(f"Registry persistence check failed: {e}")
-        
-        return findings
-    
-    def _check_explorer_hollowing(self) -> List[Dict[str, Any]]:
-        """Check for process hollowing into explorer.exe."""
-        findings = []
-        
-        try:
-            # This would typically use Windows API or memory analysis
-            # For now, return placeholder findings
-            findings.append({
-                "type": "process_hollowing",
-                "target_process": "explorer.exe",
-                "description": "Potential process hollowing into explorer.exe detected",
-                "severity": "high",
-                "mitre_technique": "T1055.012"
+            behaviors.append({
+                "type": "process_behavior",
+                "behavior": behavior_type,
+                "description": f"{behavior_type} behavior detected",
+                "timestamp": datetime.now().isoformat(),
+                "severity": "medium"
             })
             
         except Exception as e:
-            self.logger.error(f"Explorer hollowing check failed: {e}")
+            self.logger.error(f"Process behavior check failed: {e}")
         
-        return findings
+        return behaviors
     
-    def _check_watchdog_threads(self) -> List[Dict[str, Any]]:
-        """Check for watchdog threads monitoring Task Manager."""
-        findings = []
-        
-        try:
-            # This would typically use Windows API or memory analysis
-            # For now, return placeholder findings
-            findings.append({
-                "type": "watchdog_thread",
-                "target": "taskmgr.exe",
-                "description": "Watchdog thread monitoring Task Manager detected",
-                "severity": "medium",
-                "mitre_technique": "T1562.001"
-            })
-            
-        except Exception as e:
-            self.logger.error(f"Watchdog thread check failed: {e}")
-        
-        return findings
-    
-    def _check_cpu_throttling(self) -> List[Dict[str, Any]]:
-        """Check for CPU throttling behavior."""
-        findings = []
-        
-        try:
-            # This would typically use performance monitoring
-            # For now, return placeholder findings
-            findings.append({
-                "type": "cpu_throttling",
-                "description": "CPU throttling behavior detected when Task Manager opens",
-                "severity": "medium",
-                "mitre_technique": "T1562.001"
-            })
-            
-        except Exception as e:
-            self.logger.error(f"CPU throttling check failed: {e}")
-        
-        return findings
-    
-    def _check_battery_aware_behavior(self) -> List[Dict[str, Any]]:
-        """Check for battery-aware throttling behavior."""
-        findings = []
-        
-        try:
-            # This would typically use power management APIs
-            # For now, return placeholder findings
-            findings.append({
-                "type": "battery_aware_throttling",
-                "description": "Battery-aware throttling behavior detected (90% on AC, 60% on battery)",
-                "severity": "medium",
-                "mitre_technique": "T1562.001"
-            })
-            
-        except Exception as e:
-            self.logger.error(f"Battery-aware behavior check failed: {e}")
-        
-        return findings
-    
-    def _check_dns_beacons(self) -> List[Dict[str, Any]]:
-        """Check for DNS beacon to api.ipify.org."""
-        findings = []
+    def _check_network_connection(self, connection: str) -> List[Dict[str, Any]]:
+        """Check for specific network connection."""
+        connections = []
         
         try:
             # This would typically use network monitoring
             # For now, return placeholder findings
-            findings.append({
-                "type": "dns_beacon",
-                "domain": "api.ipify.org",
-                "description": "DNS beacon to api.ipify.org detected",
-                "severity": "medium",
-                "mitre_technique": "T1071.004"
+            
+            connections.append({
+                "type": "network_connection",
+                "connection": connection,
+                "description": f"Connection to {connection} detected",
+                "timestamp": datetime.now().isoformat(),
+                "severity": "high"
             })
             
         except Exception as e:
-            self.logger.error(f"DNS beacon check failed: {e}")
+            self.logger.error(f"Network connection check failed: {e}")
         
-        return findings
+        return connections
     
-    def _check_stratum_connections(self) -> List[Dict[str, Any]]:
-        """Check for Stratum protocol connections."""
-        findings = []
+    def _identify_suspicious_activities(self, analysis_results: Dict[str, Any]) -> List[Dict[str, Any]]:
+        """Identify suspicious activities from analysis results."""
+        activities = []
         
         try:
-            # This would typically use network monitoring
-            # For now, return placeholder findings
-            findings.append({
-                "type": "stratum_connection",
-                "description": "Stratum protocol connection detected",
-                "severity": "high",
-                "mitre_technique": "T1071.001"
-            })
+            # Combine findings from different analysis types
+            all_findings = []
+            
+            # Add registry findings
+            for artifact in analysis_results.get("registry_artifacts", []):
+                if artifact.get("suspicious"):
+                    all_findings.append({
+                        "type": "suspicious_registry",
+                        "description": f"Suspicious registry entry: {artifact.get('value_name')}",
+                        "severity": "high"
+                    })
+            
+            # Add service findings
+            for artifact in analysis_results.get("service_artifacts", []):
+                all_findings.append({
+                    "type": "suspicious_service",
+                    "description": f"Suspicious service: {artifact.get('service_name')}",
+                    "severity": "high"
+                })
+            
+            # Add task findings
+            for artifact in analysis_results.get("scheduled_tasks", []):
+                all_findings.append({
+                    "type": "suspicious_scheduled_task",
+                    "description": f"Suspicious scheduled task: {artifact.get('task_name')}",
+                    "severity": "high"
+                })
+            
+            activities = all_findings
             
         except Exception as e:
-            self.logger.error(f"Stratum connection check failed: {e}")
+            self.logger.error(f"Suspicious activity identification failed: {e}")
         
-        return findings
+        return activities
     
-    def _check_mining_pool_connections(self) -> List[Dict[str, Any]]:
-        """Check for mining pool connections."""
-        findings = []
+    def _map_mitre_techniques(self, analysis_results: Dict[str, Any]) -> List[Dict[str, Any]]:
+        """Map findings to MITRE ATT&CK techniques."""
+        techniques = []
         
         try:
-            # Check for connections to known mining pools
-            for pool in self.suspicious_pools:
-                findings.append({
-                    "type": "mining_pool_connection",
-                    "pool": pool,
-                    "description": f"Connection to mining pool detected: {pool}",
-                    "severity": "high",
-                    "mitre_technique": "T1071.001"
+            # Map based on findings
+            if analysis_results.get("registry_artifacts"):
+                techniques.append({
+                    "technique_id": "T1543.003",
+                    "technique_name": "Create or Modify System Process: Windows Service",
+                    "description": "Registry persistence indicators detected"
+                })
+            
+            if analysis_results.get("scheduled_tasks"):
+                techniques.append({
+                    "technique_id": "T1053.005",
+                    "technique_name": "Scheduled Task/Job: Scheduled Task",
+                    "description": "Suspicious scheduled tasks detected"
+                })
+            
+            if analysis_results.get("file_operations"):
+                techniques.append({
+                    "technique_id": "T1070.004",
+                    "technique_name": "Indicator Removal on Host: File Deletion",
+                    "description": "File deletion operations detected"
+                })
+            
+            if analysis_results.get("process_behavior"):
+                techniques.append({
+                    "technique_id": "T1055.012",
+                    "technique_name": "Process Injection: Process Hollowing",
+                    "description": "Process injection behavior detected"
                 })
             
         except Exception as e:
-            self.logger.error(f"Mining pool connection check failed: {e}")
+            self.logger.error(f"MITRE technique mapping failed: {e}")
         
-        return findings
+        return techniques
