@@ -61,3 +61,30 @@
 2025-08-05 18:08:14,166 - src.analysis.network_analyzer - ERROR - Current connection analysis failed: [Errno 2] No such file or directory: 'netstat'
 2025-08-05 18:08:21,615 - src.utils.validator - WARNING - No explicit investigation authorization found
 2025-08-05 18:08:26,193 - src.utils.validator - WARNING - No explicit investigation authorization found
+2025-08-05 18:28:44,317 - src.utils.validator - WARNING - No explicit investigation authorization found
+2025-08-05 18:29:20,146 - src.utils.validator - WARNING - No explicit investigation authorization found
+2025-08-05 18:29:36,153 - src.utils.hardware_optimizer - WARNING - EMERGENCY STOP ACTIVATED - Zeroing all mining activity
+2025-08-05 18:29:44,083 - src.utils.validator - WARNING - No explicit investigation authorization found
+2025-08-05 18:29:44,086 - src.utils.warranty_checker - ERROR - smartctl parsing failed: [Errno 2] No such file or directory: 'smartctl'
+2025-08-05 18:29:44,086 - src.utils.warranty_checker - ERROR - Basic drive info failed: [Errno 2] No such file or directory: '/dev/root'
+2025-08-05 18:29:44,087 - src.utils.warranty_checker - ERROR - smartctl parsing failed: [Errno 2] No such file or directory: 'smartctl'
+2025-08-05 18:29:44,087 - src.utils.warranty_checker - ERROR - Basic drive info failed: [Errno 2] No such file or directory: '/dev/root'
+2025-08-05 18:29:44,088 - src.utils.warranty_checker - ERROR - smartctl parsing failed: [Errno 2] No such file or directory: 'smartctl'
+2025-08-05 18:29:44,088 - src.utils.warranty_checker - ERROR - Basic drive info failed: [Errno 2] No such file or directory: '/dev/root'
+2025-08-05 18:29:44,089 - src.utils.warranty_checker - ERROR - smartctl parsing failed: [Errno 2] No such file or directory: 'smartctl'
+2025-08-05 18:29:44,089 - src.utils.warranty_checker - ERROR - Basic drive info failed: [Errno 2] No such file or directory: '/dev/root'
+2025-08-05 18:29:44,090 - src.utils.warranty_checker - ERROR - smartctl parsing failed: [Errno 2] No such file or directory: 'smartctl'
+2025-08-05 18:29:44,090 - src.utils.warranty_checker - ERROR - Basic drive info failed: [Errno 2] No such file or directory: '/dev/root'
+2025-08-05 18:29:44,091 - src.utils.warranty_checker - ERROR - smartctl parsing failed: [Errno 2] No such file or directory: 'smartctl'
+2025-08-05 18:29:44,091 - src.utils.warranty_checker - ERROR - Basic drive info failed: [Errno 2] No such file or directory: '/dev/root'
+2025-08-05 18:29:47,053 - src.utils.validator - WARNING - No explicit investigation authorization found
+2025-08-05 18:29:52,168 - src.utils.validator - WARNING - No explicit investigation authorization found
+2025-08-05 18:29:52,172 - src.analysis.static_analyzer - WARNING - Failed to load YARA rule yara_rules/urcs_detection.yar: yara_rules/urcs_detection.yar(126): unreferenced string "$service_masquerade"
+2025-08-05 18:29:52,173 - src.analysis.behavioral_analyzer - ERROR - Service analysis failed: [Errno 2] No such file or directory: 'powershell'
+2025-08-05 18:29:52,174 - src.analysis.behavioral_analyzer - ERROR - Scheduled task analysis failed: [Errno 2] No such file or directory: 'schtasks'
+2025-08-05 18:29:52,175 - src.analysis.network_analyzer - ERROR - Current connection analysis failed: [Errno 2] No such file or directory: 'netstat'
+2025-08-05 18:29:52,175 - src.analysis.network_analyzer - ERROR - DNS query analysis failed: [Errno 2] No such file or directory: 'nslookup'
+2025-08-05 18:29:52,175 - src.analysis.network_analyzer - ERROR - Current connection analysis failed: [Errno 2] No such file or directory: 'netstat'
+2025-08-05 18:29:52,176 - src.analysis.network_analyzer - ERROR - Current connection analysis failed: [Errno 2] No such file or directory: 'netstat'
+2025-08-05 18:29:52,176 - src.analysis.network_analyzer - ERROR - Current connection analysis failed: [Errno 2] No such file or directory: 'netstat'
+2025-08-05 18:29:55,355 - src.utils.validator - WARNING - No explicit investigation authorization found

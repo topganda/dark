@@ -1,0 +1,80 @@
+{
+  "timestamp": "2025-08-05T18:30:35.646733",
+  "smart_info": {
+    "drive_path": "/dev/root",
+    "power_on_hours": null,
+    "temperature_current": null,
+    "temperature_max": null,
+    "life_percentage": null,
+    "total_bytes_written": null,
+    "total_bytes_read": null,
+    "health_status": "Unknown",
+    "timestamp": "2025-08-05 18:30:35.644605"
+  },
+  "gpu_info": {
+    "gpu_model": "Unknown",
+    "vendor": "Unknown",
+    "serial_number": null,
+    "mining_flag": null,
+    "lhr_status": null,
+    "warranty_status": "Unknown",
+    "warranty_expiry": null,
+    "timestamp": "2025-08-05 18:30:35.644607"
+  },
+  "alerts": [],
+  "recommendations": [
+    "\ud83d\udca1 General warranty tips:",
+    "   - Monitor hardware temperatures regularly",
+    "   - Use proper cooling and ventilation",
+    "   - Check vendor warranty policies before mining",
+    "   - Keep hardware within recommended operating conditions",
+    "   - Document hardware usage for warranty claims"
+  ],
+  "vendor_policies": {
+    "nvidia": {
+      "mining_voids_warranty": true,
+      "lhr_models": [
+        "rtx 3060",
+        "rtx 3070",
+        "rtx 3080",
+        "rtx 3090"
+      ],
+      "warranty_portal": "https://www.nvidia.com/warranty-check"
+    },
+    "amd": {
+      "mining_voids_warranty": false,
+      "lhr_models": [],
+      "warranty_portal": "https://support.amd.com"
+    },
+    "evga": {
+      "mining_voids_warranty": true,
+      "lhr_models": [
+        "rtx 3060",
+        "rtx 3070",
+        "rtx 3080",
+        "rtx 3090"
+      ],
+      "warranty_portal": "https://www.evga.com/support"
+    },
+    "msi": {
+      "mining_voids_warranty": true,
+      "lhr_models": [
+        "rtx 3060",
+        "rtx 3070",
+        "rtx 3080",
+        "rtx 3090"
+      ],
+      "warranty_portal": "https://www.msi.com/support"
+    }
+  },
+  "thresholds": {
+    "ssd_temp_warning": 75.0,
+    "ssd_temp_critical": 80.0,
+    "ssd_life_warning": 80.0,
+    "ssd_life_critical": 90.0,
+    "power_hours_warning": 8000,
+    "power_hours_critical": 8760,
+    "gpu_temp_warning": 80.0,
+    "gpu_temp_critical": 85.0
+  }
+}
