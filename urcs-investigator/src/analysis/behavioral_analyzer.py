@@ -452,7 +452,7 @@ class BehavioralAnalyzer:
             binary_path = service_info.get("binary_path", "").lower()
             suspicious_paths = [
                 r"\system32\spool\drivers\color",
-                r"\temp\",
+                r"\temp",
                 r"appdata\local\temp"
             ]
             
@@ -600,7 +600,7 @@ class BehavioralAnalyzer:
             # Use PowerShell to find files
             cmd = [
                 "powershell", "-Command",
-                f"Get-ChildItem -Path C:\ -Recurse -Name '*{pattern}*' -ErrorAction SilentlyContinue | ConvertTo-Json"
+                f"Get-ChildItem -Path C:\\ -Recurse -Name '*{pattern}*' -ErrorAction SilentlyContinue | ConvertTo-Json"
             ]
             
             process = subprocess.run(cmd, capture_output=True, text=True, timeout=120)

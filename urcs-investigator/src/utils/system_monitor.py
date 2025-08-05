@@ -10,10 +10,14 @@ import logging
 import subprocess
 import threading
 import psutil
-import winreg
-import win32api
-import win32con
-import win32security
+try:
+    import winreg
+    import win32api
+    import win32con
+    import win32security
+    WINDOWS_AVAILABLE = True
+except ImportError:
+    WINDOWS_AVAILABLE = False
 from datetime import datetime
 from typing import Dict, Any, List, Optional, Callable
 from pathlib import Path
@@ -398,6 +402,10 @@ class SystemMonitor:
     
     def _get_registry_value(self, key_path: str) -> Optional[str]:
         """Get registry value."""
+        if not WINDOWS_AVAILABLE:
+            self.logger.warning("Windows registry access not available on this platform")
+            return None
+            
         try:
             # Parse registry path
             if key_path.startswith("HKCU\\"):

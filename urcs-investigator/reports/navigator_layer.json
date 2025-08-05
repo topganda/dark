@@ -1,0 +1,28 @@
+{
+  "name": "URCS Investigation",
+  "description": "MITRE ATT&CK mapping for URCS behaviors",
+  "domain": "enterprise-attack",
+  "version": "14.0",
+  "techniques": [
+    {
+      "techniqueID": "T1055.012",
+      "score": 1,
+      "enabled": true
+    },
+    {
+      "techniqueID": "T1071.001",
+      "score": 1,
+      "enabled": true
+    },
+    {
+      "techniqueID": "T1070.004",
+      "score": 1,
+      "enabled": true
+    },
+    {
+      "techniqueID": "T1562.001",
+      "score": 1,
+      "enabled": true
+    }
+  ]
+}

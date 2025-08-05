@@ -347,12 +347,10 @@ rule urcs_self_deletion {
         $delete_file = "DeleteFile" nocase
         $delete_file_w = "DeleteFileW" nocase
         $remove_item = "Remove-Item" nocase
-        $unlink = "unlink" nocase
         
         // Self-deletion indicators
         $self_delete = "self-delete" nocase
         $self_removal = "self-removal" nocase
-        $delete_self = "delete self" nocase
         
         // After injection context
         $after_injection = "after injection" nocase
@@ -411,7 +409,6 @@ rule urcs_battery_aware {
         // Throttling behavior
         $throttle = "throttle" nocase
         $cpu_usage = "CPU usage" nocase
-        $resource_usage = "resource usage" nocase
         
         // Usage percentages
         $usage_90 = "90%" nocase

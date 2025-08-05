@@ -107,6 +107,12 @@ Examples:
     monitor_parser.add_argument('--status', action='store_true', help='Show monitoring status')
     monitor_parser.add_argument('--config', help='Monitoring configuration file')
 
+    # Dashboard command
+    dashboard_parser = subparsers.add_parser('dashboard', help='Web dashboard for monitoring')
+    dashboard_parser.add_argument('--host', default='0.0.0.0', help='Host to bind to')
+    dashboard_parser.add_argument('--port', type=int, default=5000, help='Port to bind to')
+    dashboard_parser.add_argument('--debug', action='store_true', help='Enable debug mode')
+
     # Global options
     parser.add_argument('--verbose', '-v', action='store_true', help='Enable verbose logging')
     parser.add_argument('--debug', action='store_true', help='Enable debug mode')
@@ -146,6 +152,8 @@ Examples:
         run_setup(args, config)
     elif args.command == 'monitor':
         run_monitor(args, config)
+    elif args.command == 'dashboard':
+        run_dashboard(args, config)
     else:
         parser.print_help()
 
@@ -335,6 +343,30 @@ def run_monitor(args, config):
         print(f"  Active: {'✅' if status['monitoring'] else '❌'}")
         print(f"  Active monitors: {', '.join(status['active_monitors']) if status['active_monitors'] else 'None'}")
         print(f"  Callbacks: {status['callback_count']}")
+
+
+def run_dashboard(args, config):
+    """Run web dashboard."""
+    try:
+        from src.web.dashboard import URCSDashboard
+        
+        dashboard = URCSDashboard(config)
+        print(f"🌐 Starting URCS Dashboard on http://{args.host}:{args.port}")
+        print("📊 Dashboard features:")
+        print("  - Real-time system monitoring")
+        print("  - Live metrics and alerts")
+        print("  - Interactive investigation controls")
+        print("  - Performance charts")
+        print("\n🔗 Open your browser and navigate to the URL above")
+        print("🛑 Press Ctrl+C to stop the dashboard")
+        
+        dashboard.run(host=args.host, port=args.port, debug=args.debug)
+        
+    except ImportError as e:
+        print(f"❌ Failed to import dashboard: {e}")
+        print("💡 Install Flask and Flask-SocketIO: pip install flask flask-socketio")
+    except Exception as e:
+        print(f"❌ Dashboard error: {e}")
 
 
 if __name__ == "__main__":

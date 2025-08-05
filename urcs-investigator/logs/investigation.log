@@ -1,0 +1,9 @@
+2025-08-05 17:19:51,097 - src.utils.validator - WARNING - No explicit investigation authorization found
+2025-08-05 17:19:51,100 - src.analysis.static_analyzer - WARNING - Failed to load YARA rule yara_rules/urcs_detection.yar: yara_rules/urcs_detection.yar(383): unreferenced string "$unlink"
+2025-08-05 17:19:51,101 - src.analysis.behavioral_analyzer - ERROR - Service analysis failed: [Errno 2] No such file or directory: 'powershell'
+2025-08-05 17:19:51,101 - src.analysis.behavioral_analyzer - ERROR - Scheduled task analysis failed: [Errno 2] No such file or directory: 'schtasks'
+2025-08-05 17:19:51,102 - src.analysis.network_analyzer - ERROR - Current connection analysis failed: [Errno 2] No such file or directory: 'netstat'
+2025-08-05 17:19:51,102 - src.analysis.network_analyzer - ERROR - DNS query analysis failed: [Errno 2] No such file or directory: 'nslookup'
+2025-08-05 17:19:51,102 - src.analysis.network_analyzer - ERROR - Current connection analysis failed: [Errno 2] No such file or directory: 'netstat'
+2025-08-05 17:19:51,103 - src.analysis.network_analyzer - ERROR - Current connection analysis failed: [Errno 2] No such file or directory: 'netstat'
+2025-08-05 17:19:51,103 - src.analysis.network_analyzer - ERROR - Current connection analysis failed: [Errno 2] No such file or directory: 'netstat'
