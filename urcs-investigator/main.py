@@ -118,6 +118,18 @@ Examples:
     intensity_parser.add_argument('--duration', type=int, default=30, help='Analysis duration in minutes')
     intensity_parser.add_argument('--demo', action='store_true', help='Run intensity engine demo')
 
+    # Hardware optimization command
+    hardware_parser = subparsers.add_parser('hardware', help='Hardware-aware mining optimization')
+    hardware_parser.add_argument('--demo', action='store_true', help='Run hardware optimizer demo')
+    hardware_parser.add_argument('--optimize', action='store_true', help='Run hardware optimization')
+    hardware_parser.add_argument('--monitor', action='store_true', help='Start hardware monitoring')
+
+    # Warranty checker command
+    warranty_parser = subparsers.add_parser('warranty', help='Hardware warranty compliance checker')
+    warranty_parser.add_argument('--demo', action='store_true', help='Run warranty checker demo')
+    warranty_parser.add_argument('--check', action='store_true', help='Check warranty compliance')
+    warranty_parser.add_argument('--report', action='store_true', help='Generate warranty report')
+
     # Global options
     parser.add_argument('--verbose', '-v', action='store_true', help='Enable verbose logging')
     parser.add_argument('--debug', action='store_true', help='Enable debug mode')
@@ -161,6 +173,10 @@ Examples:
         run_dashboard(args, config)
     elif args.command == 'intensity':
         run_intensity_analysis(args, config)
+    elif args.command == 'hardware':
+        run_hardware_optimization(args, config)
+    elif args.command == 'warranty':
+        run_warranty_checker(args, config)
     else:
         parser.print_help()
 
@@ -430,6 +446,105 @@ def run_intensity_analysis(args, config):
         print("💡 Install required dependencies: pip install psutil wmi py-cpuinfo")
     except Exception as e:
         print(f"❌ Intensity analysis error: {e}")
+
+
+def run_hardware_optimization(args, config):
+    """Run hardware-aware mining optimization."""
+    try:
+        from src.utils.hardware_optimizer import HardwareOptimizer, demo_hardware_optimizer
+        
+        if args.demo:
+            print("🚀 Running Hardware Optimizer Demo...")
+            print("💡 This demonstrates hardware-aware mining optimization")
+            demo_hardware_optimizer()
+        elif args.optimize:
+            print("🔧 Running hardware optimization...")
+            
+            optimizer = HardwareOptimizer(config)
+            optimization = optimizer.optimize_mining()
+            
+            print("✅ Hardware optimization completed!")
+            print(f"📊 Algorithm: {optimization.recommended_algorithm}")
+            print(f"🔧 CPU Threads: {optimization.cpu_threads}")
+            print(f"🎮 GPU Enabled: {optimization.gpu_enabled}")
+            print(f"⚡ Intensity: {optimization.intensity_percent}%")
+            print(f"📋 Reason: {optimization.reason}")
+            print(f"🌡️ Thermal Safe: {optimization.thermal_safe}")
+            print(f"🔋 Power Safe: {optimization.power_safe}")
+            print(f"👤 User Safe: {optimization.user_safe}")
+            
+        elif args.monitor:
+            print("📊 Starting hardware monitoring...")
+            
+            optimizer = HardwareOptimizer(config)
+            optimizer.start_monitoring()
+            
+            print("✅ Hardware monitoring started")
+            print("🛑 Press Ctrl+C to stop monitoring...")
+            
+            try:
+                while True:
+                    time.sleep(1)
+            except KeyboardInterrupt:
+                print("\n🛑 Stopping hardware monitoring...")
+                optimizer.stop_monitoring()
+                print("✅ Hardware monitoring stopped")
+        else:
+            print("❌ Please specify --demo, --optimize, or --monitor")
+            
+    except ImportError as e:
+        print(f"❌ Failed to import hardware optimizer: {e}")
+        print("💡 Install required dependencies: pip install psutil wmi pynvml")
+    except Exception as e:
+        print(f"❌ Hardware optimization error: {e}")
+
+
+def run_warranty_checker(args, config):
+    """Run hardware warranty compliance checker."""
+    try:
+        from src.utils.warranty_checker import WarrantyChecker, demo_warranty_checker
+        
+        if args.demo:
+            print("🔍 Running Warranty Checker Demo...")
+            print("💡 This demonstrates hardware warranty compliance checking")
+            demo_warranty_checker()
+        elif args.check:
+            print("🔍 Checking warranty compliance...")
+            
+            checker = WarrantyChecker(config)
+            alerts = checker.check_warranty_compliance()
+            
+            print("✅ Warranty compliance check completed!")
+            print(f"📊 Alerts found: {len(alerts)}")
+            
+            for alert in alerts:
+                print(f"   - {alert.severity.upper()}: {alert.description}")
+                print(f"     Recommendation: {alert.recommendation}")
+            
+            # Get recommendations
+            recommendations = checker.get_warranty_recommendations()
+            print("\n💡 Recommendations:")
+            for rec in recommendations:
+                print(f"   {rec}")
+                
+        elif args.report:
+            print("📄 Generating warranty report...")
+            
+            checker = WarrantyChecker(config)
+            report_path = checker.export_warranty_report()
+            
+            if report_path:
+                print(f"✅ Warranty report generated: {report_path}")
+            else:
+                print("❌ Failed to generate warranty report")
+        else:
+            print("❌ Please specify --demo, --check, or --report")
+            
+    except ImportError as e:
+        print(f"❌ Failed to import warranty checker: {e}")
+        print("💡 Install required dependencies: pip install psutil wmi")
+    except Exception as e:
+        print(f"❌ Warranty checker error: {e}")
 
 
 if __name__ == "__main__":

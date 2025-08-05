@@ -10,3 +10,20 @@
 2025-08-05 17:33:29,874 - src.utils.validator - WARNING - No explicit investigation authorization found
 2025-08-05 17:34:12,226 - src.utils.validator - WARNING - No explicit investigation authorization found
 2025-08-05 17:34:12,230 - src.analysis.static_analyzer - WARNING - Failed to load YARA rule yara_rules/urcs_detection.yar: yara_rules/urcs_detection.yar(335): unreferenced string "$setup"
+2025-08-05 17:43:36,794 - src.utils.validator - WARNING - No explicit investigation authorization found
+2025-08-05 17:43:37,806 - src.utils.hardware_optimizer - ERROR - Monitoring loop error: 'HardwareOptimizer' object has no attribute 'optimimize_mining'
+2025-08-05 17:43:47,806 - src.utils.hardware_optimizer - ERROR - Monitoring loop error: 'HardwareOptimizer' object has no attribute 'optimimize_mining'
+2025-08-05 17:43:52,806 - src.utils.hardware_optimizer - WARNING - EMERGENCY STOP ACTIVATED - Zeroing all mining activity
+2025-08-05 17:44:08,529 - src.utils.validator - WARNING - No explicit investigation authorization found
+2025-08-05 17:44:08,537 - src.utils.warranty_checker - ERROR - smartctl parsing failed: [Errno 2] No such file or directory: 'smartctl'
+2025-08-05 17:44:08,538 - src.utils.warranty_checker - ERROR - Basic drive info failed: [Errno 2] No such file or directory: '/dev/root'
+2025-08-05 17:44:08,539 - src.utils.warranty_checker - ERROR - smartctl parsing failed: [Errno 2] No such file or directory: 'smartctl'
+2025-08-05 17:44:08,539 - src.utils.warranty_checker - ERROR - Basic drive info failed: [Errno 2] No such file or directory: '/dev/root'
+2025-08-05 17:44:08,540 - src.utils.warranty_checker - ERROR - smartctl parsing failed: [Errno 2] No such file or directory: 'smartctl'
+2025-08-05 17:44:08,540 - src.utils.warranty_checker - ERROR - Basic drive info failed: [Errno 2] No such file or directory: '/dev/root'
+2025-08-05 17:44:08,541 - src.utils.warranty_checker - ERROR - smartctl parsing failed: [Errno 2] No such file or directory: 'smartctl'
+2025-08-05 17:44:08,541 - src.utils.warranty_checker - ERROR - Basic drive info failed: [Errno 2] No such file or directory: '/dev/root'
+2025-08-05 17:44:08,542 - src.utils.warranty_checker - ERROR - smartctl parsing failed: [Errno 2] No such file or directory: 'smartctl'
+2025-08-05 17:44:08,542 - src.utils.warranty_checker - ERROR - Basic drive info failed: [Errno 2] No such file or directory: '/dev/root'
+2025-08-05 17:44:08,543 - src.utils.warranty_checker - ERROR - smartctl parsing failed: [Errno 2] No such file or directory: 'smartctl'
+2025-08-05 17:44:08,543 - src.utils.warranty_checker - ERROR - Basic drive info failed: [Errno 2] No such file or directory: '/dev/root'
